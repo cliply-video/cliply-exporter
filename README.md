@@ -11,7 +11,7 @@ Fully offline and local — no account, no cloud, no telemetry.
 
 ## Install
 
-Grab a build from [Releases](https://github.com/ianaya89/cliply-oss/releases):
+Grab a build from [Releases](https://github.com/cliply-video/cliply-exporter/releases):
 macOS `.dmg`, Windows `.exe`, Linux `.AppImage` / `.deb`. Unsigned for now — on
 macOS, right-click → **Open** the first time to get past Gatekeeper.
 

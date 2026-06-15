@@ -76,13 +76,13 @@ El flujo completo (descarga → XML → selección → export) termina sin error
 **Prioridad:** Alta
 
 **Por qué**
-El repo es local. El link de GitHub hardcodeado en `src/lib/links.ts` apunta a `github.com/ianaya89/cliply-oss` pero el repo no existe públicamente. Sin esto, CI y `release.yml` nunca corren, y ningún usuario externo puede acceder al proyecto.
+El repo es local. El link de GitHub hardcodeado en `src/lib/links.ts` apunta a `github.com/cliply-video/cliply-exporter` pero el repo no existe públicamente. Sin esto, CI y `release.yml` nunca corren, y ningún usuario externo puede acceder al proyecto.
 
 **Qué hacer**
 
 1. Revisar el repo local: asegurarse de que no hay secretos en el historial (API keys, certificados, `.env`). Usar `git log --all --full-diff -p | grep -i secret` o similar.
-2. Crear el repo público `ianaya89/cliply-oss` en GitHub.
-3. `git remote add origin https://github.com/ianaya89/cliply-oss.git && git push -u origin main`.
+2. Crear el repo público `cliply-video/cliply-exporter` en GitHub.
+3. `git remote add origin https://github.com/cliply-video/cliply-exporter.git && git push -u origin main`.
 4. Verificar que el CI job (`ci.yml`) arranca automáticamente en el push.
 5. Crear un tag de prueba `v0.1.0-rc1` y confirmar que `release.yml` genera un Release Draft en GitHub.
 6. Actualizar `src/lib/links.ts` si la URL final difiere de la supuesta.
@@ -235,7 +235,7 @@ Sin auto-updater, los usuarios deben descargar manualmente cada nueva versión. 
    {
      "updater": {
        "active": true,
-       "endpoints": ["https://github.com/ianaya89/cliply-oss/releases/latest/download/latest.json"],
+       "endpoints": ["https://github.com/cliply-video/cliply-exporter/releases/latest/download/latest.json"],
        "dialog": true,
        "pubkey": "..."
      }
