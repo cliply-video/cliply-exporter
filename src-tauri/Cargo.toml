@@ -1,12 +1,12 @@
 [package]
-name = "cliply-oss"
+name = "cliply-export"
 version = "0.1.0"
-description = "Open-source desktop clip cutter — YouTube + analysis XML in, MP4 clips out."
+description = "Cliply Export — open-source desktop clip cutter (YouTube + analysis XML in, MP4 clips out)."
 edition = "2021"
 license = "Apache-2.0"
 
 [lib]
-name = "cliply_oss_lib"
+name = "cliply_export_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

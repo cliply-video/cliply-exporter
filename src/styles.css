@@ -195,9 +195,9 @@ button.primary:hover:not(:disabled) {
 }
 
 .btn-lg {
-  padding: 13px 22px;
-  font-size: 15px;
-  border-radius: 12px;
+  padding: 10px 18px;
+  font-size: 14.5px;
+  border-radius: 8px;
 }
 
 .navlink {
