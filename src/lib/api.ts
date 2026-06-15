@@ -27,3 +27,32 @@ export const readXmlFile = (path: string) =>
 
 export const generatePoster = (clipId: string, src: string, tSec: number) =>
   invoke<string>("generate_poster", { clipId, src, tSec });
+
+export type ExportClip = {
+  name: string | null;
+  startSec: number;
+  endSec: number;
+  tagLabel: string | null;
+};
+
+export type ReelMode = "none" | "perTag" | "combined";
+
+export type ExportOptions = {
+  videoId: string;
+  videoTitle: string;
+  sourcePath: string;
+  outDir: string;
+  clips: ExportClip[];
+  individualClips: boolean;
+  reelMode: ReelMode;
+  reencode: boolean;
+};
+
+export type ExportSummary = {
+  clips: number;
+  reels: number;
+  outDir: string;
+};
+
+export const exportClips = (options: ExportOptions) =>
+  invoke<ExportSummary>("export_clips", { options });

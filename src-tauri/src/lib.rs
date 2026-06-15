@@ -1,5 +1,6 @@
 mod binaries;
 mod download;
+mod export;
 mod media;
 
 use tauri_plugin_sql::{Migration, MigrationKind};
@@ -40,7 +41,8 @@ pub fn run() {
             download::download_youtube,
             download::cancel_download,
             media::read_xml_file,
-            media::generate_poster
+            media::generate_poster,
+            export::export_clips
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

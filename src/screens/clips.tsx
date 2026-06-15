@@ -1,7 +1,8 @@
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { generatePoster } from "../lib/api";
+import { type ExportClip, generatePoster } from "../lib/api";
 import { type ClipRow, getClips, getVideo } from "../lib/db";
+import { ExportDialog } from "./export-dialog";
 
 function fmt(sec: number): string {
   const m = Math.floor(sec / 60);
@@ -24,18 +25,36 @@ export function Clips({
 }) {
   const [clips, setClips] = useState<ClipRow[]>([]);
   const [localPath, setLocalPath] = useState("");
+  const [title, setTitle] = useState("clips");
   const [sel, setSel] = useState<Set<string>>(new Set());
   const [preview, setPreview] = useState<ClipRow | null>(null);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     (async () => {
       const v = await getVideo(videoId);
-      if (v) setLocalPath(v.local_path);
+      if (v) {
+        setLocalPath(v.local_path);
+        setTitle(v.title);
+      }
       const rows = await getClips(videoId);
       setClips(rows);
       setSel(new Set(rows.map((c) => c.id)));
     })();
   }, [videoId]);
+
+  const selectedClips = useMemo<ExportClip[]>(
+    () =>
+      clips
+        .filter((c) => sel.has(c.id))
+        .map((c) => ({
+          name: c.name,
+          startSec: c.start_sec,
+          endSec: c.end_sec,
+          tagLabel: c.tag_label,
+        })),
+    [clips, sel],
+  );
 
   const groups = useMemo<Group[]>(() => {
     const map = new Map<string, Group>();
@@ -95,9 +114,7 @@ export function Clips({
             type="button"
             className="primary"
             disabled={sel.size === 0}
-            onClick={() =>
-              alert(`Export ${sel.size} clips — lands in P3 (ffmpeg cut/reel)`)
-            }
+            onClick={() => setExporting(true)}
           >
             Export selected
           </button>
@@ -149,6 +166,16 @@ export function Clips({
           clip={preview}
           localPath={localPath}
           onClose={() => setPreview(null)}
+        />
+      )}
+
+      {exporting && localPath && (
+        <ExportDialog
+          videoId={videoId}
+          videoTitle={title}
+          sourcePath={localPath}
+          clips={selectedClips}
+          onClose={() => setExporting(false)}
         />
       )}
     </div>
