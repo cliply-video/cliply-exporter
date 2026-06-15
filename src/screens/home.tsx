@@ -1,15 +1,11 @@
 import { listen } from "@tauri-apps/api/event";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useT } from "../i18n";
 import { cancelDownload, downloadYoutube } from "../lib/api";
 import { createVideo } from "../lib/db";
 
-const STEPS = [
-  { n: "01", title: "Paste a link", body: "Any YouTube URL — downloaded locally with yt-dlp." },
-  { n: "02", title: "Import XML", body: "SportsCode / Nacsport tags become colored clips. Optional." },
-  { n: "03", title: "Export", body: "MP4s in per-tag folders, plus reels. Stream-copy fast." },
-];
-
 export function Home({ onVideo }: { onVideo: (videoId: string) => void }) {
+  const { t } = useT();
   const [url, setUrl] = useState("");
   const [busy, setBusy] = useState(false);
   const [percent, setPercent] = useState(0);
@@ -59,29 +55,27 @@ export function Home({ onVideo }: { onVideo: (videoId: string) => void }) {
     if (videoId.current) cancelDownload(videoId.current);
   }, []);
 
+  const steps = [1, 2, 3] as const;
+
   return (
     <div className="stage">
       <div className="hero">
         <div style={{ display: "grid", gap: 10 }}>
-          <p className="eyebrow">Open-source · offline clip cutter</p>
+          <p className="eyebrow">{t("home.eyebrow")}</p>
           <h1 className="display">
-            Turn a match into
+            {t("home.titleA")}
             <br />
-            <span className="gradient-text">shareable clips.</span>
+            <span className="gradient-text">{t("home.titleB")}</span>
           </h1>
         </div>
 
-        <p className="lead">
-          Paste a video link, drop in your analysis XML, and export ready-to-cut
-          MP4s — folders per tag and reels included. No account, no cloud,
-          nothing leaves your machine.
-        </p>
+        <p className="lead">{t("home.lead")}</p>
 
         <div style={{ display: "grid", gap: 12 }}>
           <input
             className="input-xl"
             type="url"
-            placeholder="https://www.youtube.com/watch?v=…"
+            placeholder={t("home.placeholder")}
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             disabled={busy}
@@ -99,22 +93,24 @@ export function Home({ onVideo }: { onVideo: (videoId: string) => void }) {
               onClick={start}
               disabled={busy || !url.trim()}
             >
-              {busy ? `Downloading… ${Math.round(percent)}%` : "Download video →"}
+              {busy
+                ? t("home.downloading", { pct: Math.round(percent) })
+                : t("home.download")}
             </button>
             {busy && (
               <button type="button" className="btn-lg" onClick={cancel}>
-                Cancel
+                {t("home.cancel")}
               </button>
             )}
           </div>
         </div>
 
         <div className="steps">
-          {STEPS.map((s) => (
-            <div key={s.n} className="step">
-              <div className="step-n">{s.n}</div>
-              <h3>{s.title}</h3>
-              <p>{s.body}</p>
+          {steps.map((n) => (
+            <div key={n} className="step">
+              <div className="step-n">{`0${n}`}</div>
+              <h3>{t(`home.step${n}.title`)}</h3>
+              <p>{t(`home.step${n}.body`)}</p>
             </div>
           ))}
         </div>

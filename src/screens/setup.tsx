@@ -1,5 +1,6 @@
 import { listen } from "@tauri-apps/api/event";
 import { useCallback, useEffect, useState } from "react";
+import { useT } from "../i18n";
 import { type BinariesStatus, downloadBinaries } from "../lib/api";
 
 export function Setup({
@@ -9,6 +10,7 @@ export function Setup({
   status: BinariesStatus | null;
   onReady: () => void;
 }) {
+  const { t } = useT();
   const [downloading, setDownloading] = useState(false);
   const [percent, setPercent] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -36,28 +38,26 @@ export function Setup({
     }
   }, [onReady]);
 
+  const flag = (ok: boolean | undefined) =>
+    ok ? t("setup.ready") : t("setup.missing");
+
   return (
     <div className="stage">
       <div className="card">
-        <p className="eyebrow">First run</p>
-        <h2>Setting up</h2>
-        <p className="muted">
-          Cliply needs <code>ffmpeg</code> and <code>yt-dlp</code>. They
-          download once from their official sources, are verified by checksum,
-          and never bundled. Already have them on your PATH? They're used
-          automatically.
-        </p>
+        <p className="eyebrow">{t("setup.eyebrow")}</p>
+        <h2>{t("setup.title")}</h2>
+        <p className="muted">{t("setup.body")}</p>
         <ul className="muted">
-          <li>ffmpeg: {status?.ffmpeg ? "ready" : "missing"}</li>
-          <li>ffprobe: {status?.ffprobe ? "ready" : "missing"}</li>
-          <li>yt-dlp: {status?.ytdlp ? "ready" : "missing"}</li>
+          <li>ffmpeg: {flag(status?.ffmpeg)}</li>
+          <li>ffprobe: {flag(status?.ffprobe)}</li>
+          <li>yt-dlp: {flag(status?.ytdlp)}</li>
         </ul>
         {downloading && (
           <div className="bar" style={{ margin: "16px 0" }}>
             <span style={{ width: `${percent}%` }} />
           </div>
         )}
-        {error && <p style={{ color: "#ff6b6b" }}>{error}</p>}
+        {error && <p style={{ color: "var(--destructive)" }}>{error}</p>}
         <div className="row">
           <button
             type="button"
@@ -65,10 +65,12 @@ export function Setup({
             onClick={download}
             disabled={downloading}
           >
-            {downloading ? `Downloading… ${Math.round(percent)}%` : "Download"}
+            {downloading
+              ? t("setup.downloading", { pct: Math.round(percent) })
+              : t("setup.download")}
           </button>
           <button type="button" onClick={onReady} disabled={downloading}>
-            Re-check PATH
+            {t("setup.recheck")}
           </button>
         </div>
       </div>

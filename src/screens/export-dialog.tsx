@@ -2,6 +2,7 @@ import { listen } from "@tauri-apps/api/event";
 import { open } from "@tauri-apps/plugin-dialog";
 import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { useCallback, useEffect, useState } from "react";
+import { useT } from "../i18n";
 import {
   type ExportClip,
   type ExportSummary,
@@ -31,6 +32,7 @@ export function ExportDialog({
   clips: ExportClip[];
   onClose: () => void;
 }) {
+  const { t } = useT();
   const [outDir, setOutDir] = useState<string | null>(null);
   const [individual, setIndividual] = useState(true);
   const [reelMode, setReelMode] = useState<ReelMode>("perTag");
@@ -101,16 +103,16 @@ export function ExportDialog({
       }}
     >
       <div className="card">
-        <h1>Export {clips.length} clips</h1>
+        <h2>{t("export.title", { n: clips.length })}</h2>
 
         {phase === "config" && (
           <>
             <div className="row" style={{ margin: "12px 0" }}>
               <button type="button" onClick={pickDir}>
-                Choose folder…
+                {t("export.chooseFolder")}
               </button>
               <span className="muted" style={{ fontSize: 12 }}>
-                {outDir ?? "no folder chosen"}
+                {outDir ?? t("export.noFolder")}
               </span>
             </div>
             <label className="row" style={{ margin: "8px 0" }}>
@@ -119,10 +121,10 @@ export function ExportDialog({
                 checked={individual}
                 onChange={(e) => setIndividual(e.target.checked)}
               />
-              Individual clips (folder per tag)
+              {t("export.individual")}
             </label>
             <label className="row" style={{ margin: "8px 0" }}>
-              Reels:
+              {t("export.reels")}
               <select
                 value={reelMode}
                 onChange={(e) => setReelMode(e.target.value as ReelMode)}
@@ -134,9 +136,9 @@ export function ExportDialog({
                   padding: "4px 8px",
                 }}
               >
-                <option value="none">None</option>
-                <option value="perTag">One per tag</option>
-                <option value="combined">Combined (all clips)</option>
+                <option value="none">{t("export.reelNone")}</option>
+                <option value="perTag">{t("export.reelPerTag")}</option>
+                <option value="combined">{t("export.reelCombined")}</option>
               </select>
             </label>
             <label className="row" style={{ margin: "8px 0" }}>
@@ -145,14 +147,14 @@ export function ExportDialog({
                 checked={reencode}
                 onChange={(e) => setReencode(e.target.checked)}
               />
-              Re-encode (frame-accurate, slower) — off = fast stream copy
+              {t("export.reencode")}
             </label>
             <div
               className="row"
               style={{ justifyContent: "flex-end", marginTop: 16 }}
             >
               <button type="button" onClick={onClose}>
-                Cancel
+                {t("export.cancel")}
               </button>
               <button
                 type="button"
@@ -160,7 +162,7 @@ export function ExportDialog({
                 onClick={run}
                 disabled={!outDir}
               >
-                Export
+                {t("export.run")}
               </button>
             </div>
           </>
@@ -170,8 +172,16 @@ export function ExportDialog({
           <>
             <p className="muted">
               {prog
-                ? `${prog.phase === "reel" ? "Building reel" : "Cutting"}: ${prog.label} (${prog.done}/${prog.total})`
-                : "Starting…"}
+                ? t("export.progress", {
+                    verb:
+                      prog.phase === "reel"
+                        ? t("export.buildingReel")
+                        : t("export.cutting"),
+                    label: prog.label,
+                    done: prog.done,
+                    total: prog.total,
+                  })
+                : t("export.starting")}
             </p>
             <div className="bar">
               <span style={{ width: `${pct}%` }} />
@@ -182,21 +192,24 @@ export function ExportDialog({
         {phase === "done" && summary && (
           <>
             <p>
-              Exported {summary.clips} clips and {summary.reels} reels.
+              {t("export.done", {
+                clips: summary.clips,
+                reels: summary.reels,
+              })}
             </p>
             <div
               className="row"
               style={{ justifyContent: "flex-end", marginTop: 16 }}
             >
               <button type="button" onClick={onClose}>
-                Close
+                {t("export.close")}
               </button>
               <button
                 type="button"
                 className="primary"
                 onClick={() => revealItemInDir(summary.outDir)}
               >
-                Open folder
+                {t("export.openFolder")}
               </button>
             </div>
           </>
@@ -204,20 +217,20 @@ export function ExportDialog({
 
         {phase === "error" && (
           <>
-            <p style={{ color: "#ff6b6b" }}>{error}</p>
+            <p style={{ color: "var(--destructive)" }}>{error}</p>
             <div
               className="row"
               style={{ justifyContent: "flex-end", marginTop: 16 }}
             >
               <button type="button" onClick={onClose}>
-                Close
+                {t("export.close")}
               </button>
               <button
                 type="button"
                 className="primary"
                 onClick={() => setPhase("config")}
               >
-                Back
+                {t("export.back")}
               </button>
             </div>
           </>

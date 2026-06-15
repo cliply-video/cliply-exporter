@@ -1,4 +1,4 @@
-# Cliply OSS
+# Cliply Exporter
 
 Open-source desktop clip cutter. Paste a YouTube URL, import a sports-analysis
 XML (SportsCode / Nacsport `ALL_INSTANCES`), review the generated clips, pick

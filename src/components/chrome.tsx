@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useT } from "../i18n";
 import { CLIPLY_URL, GITHUB_URL, openExternal } from "../lib/links";
 import { Logo } from "./logo";
 
@@ -11,24 +12,41 @@ function GitHubIcon() {
 }
 
 export function Shell({ children }: { children: ReactNode }) {
+  const { t, locale, setLocale } = useT();
   return (
     <div className="shell">
       <header className="brandbar">
         <Logo />
         <nav className="brandnav">
+          <div className="langtoggle">
+            <button
+              type="button"
+              className={locale === "en" ? "on" : ""}
+              onClick={() => setLocale("en")}
+            >
+              EN
+            </button>
+            <button
+              type="button"
+              className={locale === "es" ? "on" : ""}
+              onClick={() => setLocale("es")}
+            >
+              ES
+            </button>
+          </div>
           <button
             type="button"
             className="navlink"
             onClick={() => openExternal(GITHUB_URL)}
           >
-            <GitHubIcon /> GitHub
+            <GitHubIcon /> {t("nav.github")}
           </button>
           <button
             type="button"
             className="promo-pill"
             onClick={() => openExternal(CLIPLY_URL)}
           >
-            Get the full app ↗
+            {t("nav.getApp")}
           </button>
         </nav>
       </header>
@@ -36,9 +54,9 @@ export function Shell({ children }: { children: ReactNode }) {
       <main className="shell-main">{children}</main>
 
       <footer className="promo-footer">
-        <span>Open-source · 100% offline · powered by cliply's clip engine</span>
+        <span>{t("footer.tagline")}</span>
         <span>
-          Cloud, teams &amp; live sharing →{" "}
+          {t("footer.cloud")}{" "}
           <button
             type="button"
             className="link-inline"

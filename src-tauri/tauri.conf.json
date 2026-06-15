@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Cliply OSS",
+  "productName": "Cliply Exporter",
   "version": "0.1.0",
   "identifier": "video.cliply.oss",
   "build": {
@@ -13,7 +13,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "Cliply OSS",
+        "title": "Cliply Exporter",
         "width": 1200,
         "height": 800,
         "minWidth": 900,

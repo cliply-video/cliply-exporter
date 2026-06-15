@@ -1,6 +1,7 @@
 import { open, save } from "@tauri-apps/plugin-dialog";
 import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { useCallback, useEffect, useState } from "react";
+import { useT } from "../i18n";
 import { copyFile, readXmlFile } from "../lib/api";
 import { getVideo, saveParsed } from "../lib/db";
 import { parseSportXml } from "../lib/xml";
@@ -14,6 +15,7 @@ export function ImportXml({
   onDone: () => void;
   onHome: () => void;
 }) {
+  const { t } = useT();
   const [src, setSrc] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +39,7 @@ export function ImportXml({
       const text = await readXmlFile(path);
       const parsed = parseSportXml(text);
       if (parsed.clips.length === 0) {
-        throw new Error("No clips found in this XML");
+        throw new Error(t("import.noClips"));
       }
       await saveParsed(videoId, parsed);
       onDone();
@@ -45,7 +47,7 @@ export function ImportXml({
       setError(String(e));
       setBusy(false);
     }
-  }, [videoId, onDone]);
+  }, [videoId, onDone, t]);
 
   const saveVideo = useCallback(async () => {
     if (!src) return;
@@ -70,21 +72,21 @@ export function ImportXml({
     return (
       <div className="stage">
         <div className="card">
-          <p className="eyebrow">Done</p>
-          <h2>Video saved</h2>
+          <p className="eyebrow">{t("import.savedEyebrow")}</p>
+          <h2>{t("import.savedTitle")}</h2>
           <p className="muted" style={{ wordBreak: "break-all" }}>
             {savedTo}
           </p>
           <div className="row" style={{ marginTop: 16 }}>
             <button type="button" onClick={onHome}>
-              Download another
+              {t("import.another")}
             </button>
             <button
               type="button"
               className="primary"
               onClick={() => revealItemInDir(savedTo)}
             >
-              Show in Finder
+              {t("import.reveal")}
             </button>
           </div>
         </div>
@@ -95,12 +97,9 @@ export function ImportXml({
   return (
     <div className="stage">
       <div className="card">
-        <p className="eyebrow">Step 2 · optional</p>
-        <h2>Import clips</h2>
-        <p className="muted">
-          Select a SportsCode / Nacsport XML file to cut clips. No XML? Just keep
-          the downloaded video.
-        </p>
+        <p className="eyebrow">{t("import.eyebrow")}</p>
+        <h2>{t("import.title")}</h2>
+        <p className="muted">{t("import.body")}</p>
         {error && <p style={{ color: "var(--destructive)" }}>{error}</p>}
         <div className="row" style={{ marginTop: 8 }}>
           <button
@@ -109,10 +108,10 @@ export function ImportXml({
             onClick={pickXml}
             disabled={busy}
           >
-            {busy ? "Working…" : "Choose XML file"}
+            {busy ? t("import.working") : t("import.choose")}
           </button>
           <button type="button" onClick={saveVideo} disabled={busy || !src}>
-            No XML — save the video
+            {t("import.noxml")}
           </button>
         </div>
         <button
@@ -122,7 +121,7 @@ export function ImportXml({
           style={{ marginTop: 16, background: "none", border: "none", padding: 0 }}
           className="muted"
         >
-          ← New video
+          {t("import.newVideo")}
         </button>
       </div>
     </div>

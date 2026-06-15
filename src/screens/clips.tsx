@@ -1,5 +1,6 @@
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useT } from "../i18n";
 import { type ExportClip, generatePoster } from "../lib/api";
 import { type ClipRow, getClips, getVideo } from "../lib/db";
 import { ExportDialog } from "./export-dialog";
@@ -23,6 +24,7 @@ export function Clips({
   videoId: string;
   onBack: () => void;
 }) {
+  const { t } = useT();
   const [clips, setClips] = useState<ClipRow[]>([]);
   const [localPath, setLocalPath] = useState("");
   const [title, setTitle] = useState("clips");
@@ -59,7 +61,7 @@ export function Clips({
   const groups = useMemo<Group[]>(() => {
     const map = new Map<string, Group>();
     for (const c of clips) {
-      const label = c.tag_label ?? "Untagged";
+      const label = c.tag_label ?? t("clips.untagged");
       let g = map.get(label);
       if (!g) {
         g = { label, color: c.tag_color ?? "#7a7a88", clips: [] };
@@ -68,7 +70,7 @@ export function Clips({
       g.clips.push(c);
     }
     return Array.from(map.values());
-  }, [clips]);
+  }, [clips, t]);
 
   const toggle = useCallback((id: string) => {
     setSel((prev) => {
@@ -96,11 +98,11 @@ export function Clips({
         style={{ justifyContent: "space-between", marginBottom: 16 }}
       >
         <button type="button" onClick={onBack}>
-          ← New video
+          {t("clips.newVideo")}
         </button>
         <div className="row">
           <span className="muted">
-            {sel.size} / {clips.length} selected
+            {t("clips.selected", { sel: sel.size, total: clips.length })}
           </span>
           <button
             type="button"
@@ -108,7 +110,7 @@ export function Clips({
               setSel(allSelected ? new Set() : new Set(clips.map((c) => c.id)))
             }
           >
-            {allSelected ? "Clear" : "Select all"}
+            {allSelected ? t("clips.clear") : t("clips.selectAll")}
           </button>
           <button
             type="button"
@@ -116,7 +118,7 @@ export function Clips({
             disabled={sel.size === 0}
             onClick={() => setExporting(true)}
           >
-            Export selected
+            {t("clips.export")}
           </button>
         </div>
       </div>
@@ -195,6 +197,7 @@ function ClipCard({
   onToggle: () => void;
   onPreview: () => void;
 }) {
+  const { t } = useT();
   const [poster, setPoster] = useState<string | null>(null);
 
   useEffect(() => {
@@ -244,7 +247,7 @@ function ClipCard({
               textOverflow: "ellipsis",
             }}
           >
-            {clip.name ?? clip.tag_label ?? "Clip"}
+            {clip.name ?? clip.tag_label ?? t("clips.clip")}
           </div>
           <div className="muted" style={{ fontSize: 12 }}>
             {fmt(clip.start_sec)}–{fmt(clip.end_sec)}
