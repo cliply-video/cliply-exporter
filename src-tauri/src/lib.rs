@@ -1,4 +1,6 @@
 mod binaries;
+mod download;
+mod media;
 
 use tauri_plugin_sql::{Migration, MigrationKind};
 
@@ -31,10 +33,14 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(tauri_plugin_http::init())
-        .plugin(tauri_plugin_shell::init())
+        .manage(download::DownloadState::default())
         .invoke_handler(tauri::generate_handler![
             binaries::binaries_status,
-            binaries::download_binaries
+            binaries::download_binaries,
+            download::download_youtube,
+            download::cancel_download,
+            media::read_xml_file,
+            media::generate_poster
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
