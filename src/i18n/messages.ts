@@ -23,7 +23,7 @@ export const messages: Record<Locale, Record<string, string>> = {
     "home.titleB": "shareable clips.",
     "home.lead":
       "Paste a video link, drop in your analysis XML, and export ready-to-cut MP4s — folders per tag and reels included. No account, no cloud, nothing leaves your machine.",
-    "home.placeholder": "https://www.youtube.com/watch?v=…",
+    "home.placeholder": "YouTube URL or video ID (e.g. TM5EWRJ2ZSQ)",
     "home.download": "Download video →",
     "home.downloading": "Downloading… {pct}%",
     "home.cancel": "Cancel",
@@ -99,7 +99,7 @@ export const messages: Record<Locale, Record<string, string>> = {
     "home.titleB": "clips para compartir.",
     "home.lead":
       "Pegá un enlace de video, sumá tu XML de análisis y exportá MP4s listos — carpetas por etiqueta y reels incluidos. Sin cuenta, sin nube, nada sale de tu equipo.",
-    "home.placeholder": "https://www.youtube.com/watch?v=…",
+    "home.placeholder": "URL de YouTube o ID del video (ej. TM5EWRJ2ZSQ)",
     "home.download": "Descargar video →",
     "home.downloading": "Descargando… {pct}%",
     "home.cancel": "Cancelar",

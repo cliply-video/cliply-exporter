@@ -4,6 +4,15 @@ import { useT } from "../i18n";
 import { cancelDownload, downloadYoutube } from "../lib/api";
 import { createVideo } from "../lib/db";
 
+// Accept a full URL or a bare 11-char YouTube id (e.g. "TM5EWRJ2ZSQ").
+function toVideoUrl(input: string): string {
+  const s = input.trim();
+  if (/^[A-Za-z0-9_-]{11}$/.test(s)) {
+    return `https://www.youtube.com/watch?v=${s}`;
+  }
+  return s;
+}
+
 export function Home({ onVideo }: { onVideo: (videoId: string) => void }) {
   const { t } = useT();
   const [url, setUrl] = useState("");
@@ -25,23 +34,23 @@ export function Home({ onVideo }: { onVideo: (videoId: string) => void }) {
   }, []);
 
   const start = useCallback(async () => {
-    const trimmed = url.trim();
-    if (!trimmed) return;
+    const target = toVideoUrl(url);
+    if (!target) return;
     const id = crypto.randomUUID();
     videoId.current = id;
     setBusy(true);
     setError(null);
     setPercent(0);
     try {
-      const out = await downloadYoutube(id, trimmed);
+      const out = await downloadYoutube(id, target);
       if (out.status === "cancelled") {
         setBusy(false);
         return;
       }
       await createVideo({
         id,
-        title: out.title ?? trimmed,
-        url: trimmed,
+        title: out.title ?? target,
+        url: target,
         local_path: out.path ?? "",
       });
       onVideo(id);
@@ -74,7 +83,7 @@ export function Home({ onVideo }: { onVideo: (videoId: string) => void }) {
         <div style={{ display: "grid", gap: 12 }}>
           <input
             className="input-xl"
-            type="url"
+            type="text"
             placeholder={t("home.placeholder")}
             value={url}
             onChange={(e) => setUrl(e.target.value)}
