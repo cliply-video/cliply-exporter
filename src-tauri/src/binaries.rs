@@ -68,52 +68,59 @@ fn exe_name(name: &str) -> String {
     }
 }
 
-/// Per-platform official download source for a tool.
+/// Pinned official download source for a tool on the current platform.
 ///
-/// TODO(P1 gate): pin the `sha256` for each entry against the exact release
-/// asset before shipping. Until pinned, `download_binaries` refuses the tool
-/// and resolution falls back to a system-installed copy.
+/// Versions are pinned with verified SHA256 (bump deliberately on release).
+/// `None` means no managed download for this platform → fall back to a
+/// system/PATH copy (see `resolve`). yt-dlp: pinned 2026.06.09 (raw binary,
+/// all platforms). ffmpeg/ffprobe: macOS via the evermeet 8.1.1 static zip;
+/// Windows/Linux not yet bundled — use system ffmpeg or set FFMPEG_PATH.
 fn source(tool: Tool) -> Option<Source> {
     match tool {
         Tool::YtDlp => {
-            // yt-dlp ships a raw standalone binary per platform.
             #[cfg(target_os = "macos")]
             return Some(Source {
-                url: "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_macos",
-                sha256: "",
+                url: "https://github.com/yt-dlp/yt-dlp/releases/download/2026.06.09/yt-dlp_macos",
+                sha256: "b82c3626952e6c14eaf654cc565866775ffd0b9ffb7021628ac59b42c2f4f244",
                 archive: Archive::Raw,
                 member: "yt-dlp",
             });
             #[cfg(target_os = "windows")]
             return Some(Source {
-                url: "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe",
-                sha256: "",
+                url: "https://github.com/yt-dlp/yt-dlp/releases/download/2026.06.09/yt-dlp.exe",
+                sha256: "3a48cb955d55c8821b60ccbdbbc6f61bc958f2f3d3b7ad5eaf3d83a543293a27",
                 archive: Archive::Raw,
                 member: "yt-dlp.exe",
             });
             #[cfg(target_os = "linux")]
             return Some(Source {
-                url: "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_linux",
-                sha256: "",
+                url: "https://github.com/yt-dlp/yt-dlp/releases/download/2026.06.09/yt-dlp_linux",
+                sha256: "bf8aac79b72287a6d2043074415132558b43743a8f9461a22b0141e90f16ce66",
                 archive: Archive::Raw,
                 member: "yt-dlp",
             });
             #[allow(unreachable_code)]
             None
         }
-        // ffmpeg/ffprobe archive formats differ per platform (mac evermeet .7z,
-        // win gyan .zip, linux johnvansickle .tar.xz). Windows .zip is wired;
-        // mac/linux extraction lands with the SHA pins (see plan §4 open items).
         Tool::Ffmpeg | Tool::Ffprobe => {
-            #[cfg(target_os = "windows")]
+            #[cfg(target_os = "macos")]
             {
-                let member = match tool {
-                    Tool::Ffprobe => "ffprobe.exe",
-                    _ => "ffmpeg.exe",
+                // evermeet 8.1.1 static build (x86_64; runs on arm64 via Rosetta).
+                let (url, sha256, member) = match tool {
+                    Tool::Ffprobe => (
+                        "https://evermeet.cx/ffmpeg/ffprobe-8.1.1.zip",
+                        "aeade29dee3c3844e9bcc974f4ae4b29cc4f87994177d77003a8589fa531009e",
+                        "ffprobe",
+                    ),
+                    _ => (
+                        "https://evermeet.cx/ffmpeg/ffmpeg-8.1.1.zip",
+                        "4610988e2f54c243c50da73a09e4e2c36d9bb77546f9aa6c84cb328dcb1a98c1",
+                        "ffmpeg",
+                    ),
                 };
                 return Some(Source {
-                    url: "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip",
-                    sha256: "",
+                    url,
+                    sha256,
                     archive: Archive::Zip,
                     member,
                 });
@@ -215,13 +222,15 @@ pub async fn download_binaries(app: AppHandle) -> Result<(), String> {
     let slice = 100.0 / missing.len() as f64;
 
     for (i, tool) in missing.iter().enumerate() {
-        let src = source(*tool)
-            .ok_or_else(|| format!("{}: no official source for this platform", tool.key()))?;
+        let src = source(*tool).ok_or_else(|| {
+            format!(
+                "{}: no managed download for this platform — install it (e.g. your package manager) or set {}",
+                tool.key(),
+                tool.env_var()
+            )
+        })?;
         if src.sha256.is_empty() {
-            return Err(format!(
-                "{}: download checksum not pinned yet — install it via your package manager for now",
-                tool.key()
-            ));
+            return Err(format!("{}: download checksum not pinned", tool.key()));
         }
         let dest = dir.join(exe_name(tool.key()));
         download_one(&app, &dir, &src, &dest, slice * i as f64, slice).await?;
@@ -315,4 +324,28 @@ fn set_executable(path: &Path) -> Result<(), String> {
         let _ = path;
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn pinned_sources_have_valid_sha256() {
+        for tool in Tool::ALL {
+            if let Some(s) = source(tool) {
+                assert_eq!(s.sha256.len(), 64, "{}: sha must be 64 hex chars", tool.key());
+                assert!(
+                    s.sha256.bytes().all(|b| b.is_ascii_hexdigit()),
+                    "{}: sha must be hex",
+                    tool.key()
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn ytdlp_always_has_a_managed_source() {
+        assert!(source(Tool::YtDlp).is_some());
+    }
 }

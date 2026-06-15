@@ -32,6 +32,7 @@ struct Progress {
 pub struct DownloadOutcome {
     status: &'static str, // "done" | "cancelled"
     path: Option<String>,
+    title: Option<String>,
 }
 
 fn es(e: impl std::fmt::Display) -> String {
@@ -70,6 +71,7 @@ pub async fn download_youtube(
 
     let out = media_dir(&app)?.join(format!("{video_id}.mp4"));
     let out_str = out.to_string_lossy().into_owned();
+    let info_path = out.with_extension("info.json");
 
     let mut args: Vec<String> = vec![
         "--no-playlist".into(),
@@ -77,6 +79,10 @@ pub async fn download_youtube(
         "--continue".into(),
         "-o".into(),
         out_str.clone(),
+        // Capture the real title without affecting the media output path.
+        "--write-info-json".into(),
+        "-o".into(),
+        format!("infojson:{}", info_path.to_string_lossy()),
     ];
     if let Some(ff) = &ffmpeg {
         let ff_dir = ff
@@ -153,9 +159,11 @@ pub async fn download_youtube(
     state.cancel.lock().unwrap().remove(&video_id);
 
     if was_cancelled {
+        let _ = std::fs::remove_file(&info_path);
         return Ok(DownloadOutcome {
             status: "cancelled",
             path: None,
+            title: None,
         });
     }
     if !status.success() {
@@ -169,10 +177,23 @@ pub async fn download_youtube(
     if !out.exists() {
         return Err("yt-dlp finished but produced no file".to_string());
     }
+
+    // Pull the title out of the info json, then drop the file.
+    let title = std::fs::read_to_string(&info_path)
+        .ok()
+        .and_then(|s| serde_json::from_str::<serde_json::Value>(&s).ok())
+        .and_then(|v| {
+            v.get("title")
+                .and_then(|t| t.as_str())
+                .map(|s| s.to_string())
+        });
+    let _ = std::fs::remove_file(&info_path);
+
     emit(&app, &video_id, 100.0);
     Ok(DownloadOutcome {
         status: "done",
         path: Some(out_str),
+        title,
     })
 }
 

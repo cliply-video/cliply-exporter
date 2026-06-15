@@ -40,7 +40,7 @@ export function Home({ onVideo }: { onVideo: (videoId: string) => void }) {
       }
       await createVideo({
         id,
-        title: trimmed,
+        title: out.title ?? trimmed,
         url: trimmed,
         local_path: out.path ?? "",
       });

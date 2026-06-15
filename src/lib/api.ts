@@ -14,6 +14,7 @@ export const downloadBinaries = () => invoke<void>("download_binaries");
 export type DownloadOutcome = {
   status: "done" | "cancelled";
   path: string | null;
+  title: string | null;
 };
 
 export const downloadYoutube = (videoId: string, url: string) =>
