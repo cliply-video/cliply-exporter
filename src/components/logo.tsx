@@ -50,7 +50,7 @@ export function Logo() {
       <LogoMark />
       <span className="wordmark">
         cli<span className="brand">ply</span>
-        <span className="oss">exporter</span>
+        <span className="oss">export</span>
       </span>
     </span>
   );

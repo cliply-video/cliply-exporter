@@ -11,7 +11,7 @@ export const messages: Record<Locale, Record<string, string>> = {
     "setup.eyebrow": "First run",
     "setup.title": "Setting up",
     "setup.body":
-      "Cliply Exporter needs ffmpeg and yt-dlp. They download once from their official sources, are verified by checksum, and never bundled. Already have them on your PATH? They're used automatically.",
+      "Cliply Export needs ffmpeg and yt-dlp. They download once from their official sources, are verified by checksum, and never bundled. Already have them on your PATH? They're used automatically.",
     "setup.ready": "ready",
     "setup.missing": "missing",
     "setup.download": "Download",
@@ -87,7 +87,7 @@ export const messages: Record<Locale, Record<string, string>> = {
     "setup.eyebrow": "Primer inicio",
     "setup.title": "Configuración",
     "setup.body":
-      "Cliply Exporter necesita ffmpeg y yt-dlp. Se descargan una vez desde sus fuentes oficiales, se verifican por checksum y nunca se empaquetan. ¿Ya los tenés en tu PATH? Se usan automáticamente.",
+      "Cliply Export necesita ffmpeg y yt-dlp. Se descargan una vez desde sus fuentes oficiales, se verifican por checksum y nunca se empaquetan. ¿Ya los tenés en tu PATH? Se usan automáticamente.",
     "setup.ready": "listo",
     "setup.missing": "falta",
     "setup.download": "Descargar",
