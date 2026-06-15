@@ -1,7 +1,6 @@
 import { open, save } from "@tauri-apps/plugin-dialog";
 import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { useCallback, useEffect, useState } from "react";
-import { Logo } from "../components/logo";
 import { copyFile, readXmlFile } from "../lib/api";
 import { getVideo, saveParsed } from "../lib/db";
 import { parseSportXml } from "../lib/xml";
@@ -69,9 +68,9 @@ export function ImportXml({
 
   if (savedTo) {
     return (
-      <div className="center">
+      <div className="stage">
         <div className="card">
-          <Logo />
+          <p className="eyebrow">Done</p>
           <h2>Video saved</h2>
           <p className="muted" style={{ wordBreak: "break-all" }}>
             {savedTo}
@@ -94,9 +93,9 @@ export function ImportXml({
   }
 
   return (
-    <div className="center">
+    <div className="stage">
       <div className="card">
-        <Logo />
+        <p className="eyebrow">Step 2 · optional</p>
         <h2>Import clips</h2>
         <p className="muted">
           Select a SportsCode / Nacsport XML file to cut clips. No XML? Just keep

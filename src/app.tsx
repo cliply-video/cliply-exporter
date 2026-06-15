@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { type ReactNode, useCallback, useEffect, useState } from "react";
+import { Shell } from "./components/chrome";
 import { type BinariesStatus, binariesStatus } from "./lib/api";
 import { Clips } from "./screens/clips";
 import { Home } from "./screens/home";
@@ -25,23 +26,24 @@ export function App() {
     refresh();
   }, [refresh]);
 
+  let screen: ReactNode;
   if (!ready(status)) {
-    return <Setup status={status} onReady={refresh} />;
-  }
-
-  if (step.name === "home") {
-    return (
-      <Home onVideo={(videoId) => setStep({ name: "import", videoId })} />
-    );
-  }
-  if (step.name === "import") {
-    return (
+    screen = <Setup status={status} onReady={refresh} />;
+  } else if (step.name === "home") {
+    screen = <Home onVideo={(videoId) => setStep({ name: "import", videoId })} />;
+  } else if (step.name === "import") {
+    screen = (
       <ImportXml
         videoId={step.videoId}
         onDone={() => setStep({ name: "clips", videoId: step.videoId })}
         onHome={() => setStep({ name: "home" })}
       />
     );
+  } else {
+    screen = (
+      <Clips videoId={step.videoId} onBack={() => setStep({ name: "home" })} />
+    );
   }
-  return <Clips videoId={step.videoId} onBack={() => setStep({ name: "home" })} />;
+
+  return <Shell>{screen}</Shell>;
 }
