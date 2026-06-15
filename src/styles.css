@@ -15,6 +15,7 @@
   --accent-fg: #2c2440;
   --destructive: #ff857f;
   --brand-gradient: linear-gradient(115deg, #ff9ecd 0%, #b88cf0 48%, #8ab0f8 100%);
+  --shadow-glow: 0 8px 24px -10px color-mix(in srgb, var(--accent), transparent 40%);
 }
 
 * {
@@ -155,36 +156,42 @@ body::after {
 }
 
 /* ---- buttons / links ---- */
+/* Buttons mirror cliply.video: solid primary, rounded-md, font-medium,
+   subtle shadow → glow on hover, active scale. Gradient is reserved for
+   brand accents (wordmark, progress, promo pill) — not action buttons. */
 button {
   font: inherit;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  border: 1px solid var(--border);
+  border: 1px solid color-mix(in srgb, var(--border), transparent 25%);
   background: var(--panel-2);
   color: var(--text);
-  border-radius: 10px;
-  padding: 9px 15px;
-  transition:
-    transform 0.12s ease,
-    filter 0.15s ease,
-    background 0.15s ease;
+  border-radius: 8px;
+  padding: 7px 13px;
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 button:hover:not(:disabled) {
-  filter: brightness(1.08);
+  background: color-mix(in srgb, var(--panel-2), white 7%);
 }
 button:active:not(:disabled) {
-  transform: translateY(1px);
+  transform: scale(0.97);
 }
 button:disabled {
-  opacity: 0.45;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 button.primary {
-  background: var(--brand-gradient);
+  background: var(--accent);
   color: var(--accent-fg);
-  border: none;
-  font-weight: 700;
-  box-shadow: 0 10px 26px -12px color-mix(in srgb, var(--accent), transparent 30%);
+  border: 1px solid transparent;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.22);
+}
+button.primary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent), black 7%);
+  box-shadow: var(--shadow-glow);
 }
 
 .btn-lg {
@@ -401,4 +408,196 @@ code {
   height: 100%;
   background: var(--brand-gradient);
   transition: width 0.2s ease;
+}
+
+/* ---- clips toolbar ---- */
+.clips-bar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 28px;
+  margin: -20px -28px 16px;
+  background: color-mix(in srgb, var(--bg-deep), transparent 12%);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid color-mix(in srgb, var(--border), transparent 50%);
+}
+.count-chip {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  background: color-mix(in srgb, var(--panel-2), transparent 25%);
+  border: 1px solid color-mix(in srgb, var(--border), transparent 30%);
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- group header ---- */
+.group-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 22px 0 10px;
+  cursor: pointer;
+  user-select: none;
+}
+.group-check {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  border: 2px solid color-mix(in srgb, var(--muted), transparent 35%);
+  display: grid;
+  place-items: center;
+  color: transparent;
+  flex: 0 0 auto;
+  transition: all 0.15s ease;
+}
+.group-check.all {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-fg);
+}
+.group-check.some {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent), transparent 65%);
+  color: var(--accent);
+}
+.group-head .dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  flex: 0 0 auto;
+}
+.group-head .gname {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.group-head .gcount {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ---- clip card ---- */
+.clip {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--panel);
+  border: 1px solid color-mix(in srgb, var(--border), transparent 45%);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.12s ease;
+}
+.clip:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--accent), transparent 35%);
+}
+.clip.sel {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent), transparent 50%);
+}
+.clip-poster {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background-color: #000;
+  background-size: cover;
+  background-position: center;
+}
+.clip:not(.sel) .clip-poster::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--bg-deep), transparent 35%);
+  opacity: 0.55;
+  transition: opacity 0.15s ease;
+}
+.clip:hover:not(.sel) .clip-poster::after {
+  opacity: 0.2;
+}
+.clip-check {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  z-index: 2;
+}
+.clip.sel .clip-check {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-fg);
+}
+.clip-play {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 2;
+}
+.clip:hover .clip-play {
+  opacity: 1;
+}
+.clip-play > span {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: rgba(20, 16, 30, 0.55);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  padding-left: 3px;
+}
+.clip-meta {
+  padding: 7px 9px 8px;
+}
+.clip-meta .nm {
+  font-size: 12.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.clip-meta .tm {
+  font-size: 11px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- video overlay ---- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(8, 6, 14, 0.82);
+  backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  padding: 28px;
+}
+.overlay video {
+  max-width: 92vw;
+  max-height: 86vh;
+  border-radius: 12px;
+  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8);
+}
+.overlay-close {
+  position: absolute;
+  top: 18px;
+  right: 20px;
 }

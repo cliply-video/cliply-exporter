@@ -55,6 +55,8 @@ export const messages: Record<Locale, Record<string, string>> = {
     "clips.untagged": "Untagged",
     "clips.clip": "Clip",
     "clips.newVideo": "← New video",
+    "clips.watch": "Watch video",
+    "clips.close": "Close",
 
     "export.title": "Export {n} clips",
     "export.chooseFolder": "Choose folder…",
@@ -132,6 +134,8 @@ export const messages: Record<Locale, Record<string, string>> = {
     "clips.untagged": "Sin etiqueta",
     "clips.clip": "Clip",
     "clips.newVideo": "← Nuevo video",
+    "clips.watch": "Ver video",
+    "clips.close": "Cerrar",
 
     "export.title": "Exportar {n} clips",
     "export.chooseFolder": "Elegir carpeta…",

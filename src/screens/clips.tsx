@@ -11,6 +11,22 @@ function fmt(sec: number): string {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
+function CheckIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M3.5 8.5l3 3 6-7" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function PlayIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M8 5v14l11-7z" />
+    </svg>
+  );
+}
+
 interface Group {
   label: string;
   color: string;
@@ -29,7 +45,8 @@ export function Clips({
   const [localPath, setLocalPath] = useState("");
   const [title, setTitle] = useState("clips");
   const [sel, setSel] = useState<Set<string>>(new Set());
-  const [preview, setPreview] = useState<ClipRow | null>(null);
+  // null = closed; number = seek-to seconds in the full video.
+  const [playAt, setPlayAt] = useState<number | null>(null);
   const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
@@ -75,7 +92,8 @@ export function Clips({
   const toggle = useCallback((id: string) => {
     setSel((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return next;
     });
   }, []);
@@ -84,7 +102,10 @@ export function Clips({
     setSel((prev) => {
       const next = new Set(prev);
       const allOn = g.clips.every((c) => next.has(c.id));
-      for (const c of g.clips) allOn ? next.delete(c.id) : next.add(c.id);
+      for (const c of g.clips) {
+        if (allOn) next.delete(c.id);
+        else next.add(c.id);
+      }
       return next;
     });
   }, []);
@@ -93,15 +114,12 @@ export function Clips({
 
   return (
     <div style={{ padding: "20px 28px" }}>
-      <div
-        className="row"
-        style={{ justifyContent: "space-between", marginBottom: 16 }}
-      >
+      <div className="clips-bar">
         <button type="button" onClick={onBack}>
           {t("clips.newVideo")}
         </button>
-        <div className="row">
-          <span className="muted">
+        <div className="row" style={{ gap: 10 }}>
+          <span className="count-chip">
             {t("clips.selected", { sel: sel.size, total: clips.length })}
           </span>
           <button
@@ -112,6 +130,11 @@ export function Clips({
           >
             {allSelected ? t("clips.clear") : t("clips.selectAll")}
           </button>
+          {localPath && (
+            <button type="button" onClick={() => setPlayAt(0)}>
+              ▶ {t("clips.watch")}
+            </button>
+          )}
           <button
             type="button"
             className="primary"
@@ -123,51 +146,50 @@ export function Clips({
         </div>
       </div>
 
-      {groups.map((g) => (
-        <section key={g.label} style={{ marginBottom: 24 }}>
-          <div
-            className="row"
-            style={{ marginBottom: 8, cursor: "pointer" }}
-            onClick={() => toggleGroup(g)}
-          >
-            <span
+      {groups.map((g) => {
+        const selN = g.clips.filter((c) => sel.has(c.id)).length;
+        const state = selN === 0 ? "" : selN === g.clips.length ? "all" : "some";
+        return (
+          <section key={g.label}>
+            <div className="group-head" onClick={() => toggleGroup(g)}>
+              <span className={`group-check ${state}`}>
+                <CheckIcon />
+              </span>
+              <span className="dot" style={{ background: g.color }} />
+              <span className="gname">{g.label}</span>
+              <span className="gcount">
+                {selN}/{g.clips.length}
+              </span>
+            </div>
+            <div
               style={{
-                width: 12,
-                height: 12,
-                borderRadius: 3,
-                background: g.color,
-                display: "inline-block",
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(168px, 1fr))",
+                gap: 10,
               }}
-            />
-            <strong>{g.label}</strong>
-            <span className="muted">({g.clips.length})</span>
-          </div>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(168px, 1fr))",
-              gap: 10,
-            }}
-          >
-            {g.clips.map((c) => (
-              <ClipCard
-                key={c.id}
-                clip={c}
-                localPath={localPath}
-                selected={sel.has(c.id)}
-                onToggle={() => toggle(c.id)}
-                onPreview={() => setPreview(c)}
-              />
-            ))}
-          </div>
-        </section>
-      ))}
+            >
+              {g.clips.map((c) => (
+                <ClipCard
+                  key={c.id}
+                  clip={c}
+                  localPath={localPath}
+                  selected={sel.has(c.id)}
+                  onToggle={() => toggle(c.id)}
+                  onPlay={() => setPlayAt(c.t_sec)}
+                />
+              ))}
+            </div>
+          </section>
+        );
+      })}
 
-      {preview && localPath && (
-        <PreviewOverlay
-          clip={preview}
-          localPath={localPath}
-          onClose={() => setPreview(null)}
+      {playAt !== null && localPath && (
+        <VideoOverlay
+          src={localPath}
+          at={playAt}
+          title={title}
+          closeLabel={t("clips.close")}
+          onClose={() => setPlayAt(null)}
         />
       )}
 
@@ -189,13 +211,13 @@ function ClipCard({
   localPath,
   selected,
   onToggle,
-  onPreview,
+  onPlay,
 }: {
   clip: ClipRow;
   localPath: string;
   selected: boolean;
   onToggle: () => void;
-  onPreview: () => void;
+  onPlay: () => void;
 }) {
   const { t } = useT();
   const [poster, setPoster] = useState<string | null>(null);
@@ -215,85 +237,69 @@ function ClipCard({
 
   return (
     <div
-      style={{
-        border: `1px solid ${selected ? "var(--accent)" : "var(--border)"}`,
-        borderRadius: 10,
-        overflow: "hidden",
-        background: "var(--panel)",
-      }}
+      className={`clip ${selected ? "sel" : "unsel"}`}
+      onClick={onToggle}
+      role="checkbox"
+      aria-checked={selected}
     >
-      <button
-        type="button"
-        onClick={onPreview}
-        style={{
-          padding: 0,
-          border: "none",
-          borderRadius: 0,
-          width: "100%",
-          aspectRatio: "16 / 9",
-          background: poster ? `center/cover url(${poster})` : "#000",
-          display: "block",
-        }}
-        aria-label="Preview clip"
-      />
-      <div className="row" style={{ padding: 8, gap: 8 }}>
-        <input type="checkbox" checked={selected} onChange={onToggle} />
-        <div style={{ minWidth: 0 }}>
-          <div
-            style={{
-              fontSize: 13,
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-            {clip.name ?? clip.tag_label ?? t("clips.clip")}
-          </div>
-          <div className="muted" style={{ fontSize: 12 }}>
-            {fmt(clip.start_sec)}–{fmt(clip.end_sec)}
-          </div>
+      <div
+        className="clip-poster"
+        style={poster ? { backgroundImage: `url(${poster})` } : undefined}
+      >
+        <span className="clip-check">{selected && <CheckIcon />}</span>
+        <button
+          type="button"
+          className="clip-play"
+          aria-label="Play"
+          onClick={(e) => {
+            e.stopPropagation();
+            onPlay();
+          }}
+          style={{ background: "none", border: "none", padding: 0 }}
+        >
+          <span>
+            <PlayIcon />
+          </span>
+        </button>
+      </div>
+      <div className="clip-meta">
+        <div className="nm">{clip.name ?? clip.tag_label ?? t("clips.clip")}</div>
+        <div className="tm">
+          {fmt(clip.start_sec)}–{fmt(clip.end_sec)}
         </div>
       </div>
     </div>
   );
 }
 
-function PreviewOverlay({
-  clip,
-  localPath,
+function VideoOverlay({
+  src,
+  at,
+  title,
+  closeLabel,
   onClose,
 }: {
-  clip: ClipRow;
-  localPath: string;
+  src: string;
+  at: number;
+  title: string;
+  closeLabel: string;
   onClose: () => void;
 }) {
   return (
-    <div
-      onClick={onClose}
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(0,0,0,0.8)",
-        display: "grid",
-        placeItems: "center",
-        padding: 24,
-      }}
-    >
-      {/* biome-ignore lint/a11y: media element, click handled on backdrop */}
+    <div className="overlay" onClick={onClose}>
+      <button type="button" className="overlay-close" onClick={onClose}>
+        ✕ {closeLabel}
+      </button>
+      {/* biome-ignore lint/a11y: backdrop closes; native video controls used */}
       <video
-        src={convertFileSrc(localPath)}
+        src={convertFileSrc(src)}
         controls
         autoPlay
+        title={title}
         onClick={(e) => e.stopPropagation()}
         onLoadedMetadata={(e) => {
-          e.currentTarget.currentTime = clip.start_sec;
+          if (at > 0) e.currentTarget.currentTime = at;
         }}
-        onTimeUpdate={(e) => {
-          if (e.currentTarget.currentTime >= clip.end_sec) {
-            e.currentTarget.pause();
-          }
-        }}
-        style={{ maxWidth: "90vw", maxHeight: "85vh", borderRadius: 10 }}
       >
         <track kind="captions" />
       </video>
