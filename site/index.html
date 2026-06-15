@@ -15,6 +15,8 @@
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://exporter.cliply.video" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -56,9 +58,9 @@
         z-index: 0;
         pointer-events: none;
         background:
-          radial-gradient(40% 38% at 16% 8%, color-mix(in srgb, #ff9ecd, transparent 80%), transparent 70%),
-          radial-gradient(44% 40% at 88% 14%, color-mix(in srgb, #8ab0f8, transparent 82%), transparent 70%),
-          radial-gradient(50% 46% at 72% 92%, color-mix(in srgb, #b88cf0, transparent 84%), transparent 72%);
+          radial-gradient(40% 38% at 16% 6%, color-mix(in srgb, #ff9ecd, transparent 80%), transparent 70%),
+          radial-gradient(44% 40% at 88% 12%, color-mix(in srgb, #8ab0f8, transparent 82%), transparent 70%),
+          radial-gradient(50% 46% at 72% 94%, color-mix(in srgb, #b88cf0, transparent 84%), transparent 72%);
       }
       body::after {
         content: "";
@@ -93,9 +95,11 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 18px 24px;
+        gap: 16px;
+        padding: 20px 24px;
         max-width: 1080px;
         margin: 0 auto;
+        flex-wrap: wrap;
       }
       .logo {
         display: inline-flex;
@@ -126,6 +130,25 @@
       }
       .navlinks a:hover {
         color: var(--text);
+      }
+      .langtoggle {
+        display: inline-flex;
+        border: 1px solid color-mix(in srgb, var(--border), transparent 40%);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+      .langtoggle button {
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        padding: 5px 11px;
+        font: 700 12px/1 var(--font-body);
+        letter-spacing: 0.04em;
+        cursor: pointer;
+      }
+      .langtoggle button.on {
+        background: var(--brand);
+        color: var(--accent-fg);
       }
 
       /* buttons (match cliply.video) */
@@ -166,7 +189,7 @@
 
       /* hero */
       .hero {
-        padding: 60px 0 40px;
+        padding: 84px 0 64px;
         text-align: center;
       }
       .eyebrow {
@@ -183,24 +206,24 @@
         letter-spacing: -0.035em;
         line-height: 0.98;
         font-size: clamp(40px, 8vw, 84px);
-        margin: 14px 0 0;
+        margin: 16px 0 0;
       }
       .lead {
         font-size: clamp(16px, 1.8vw, 20px);
         color: var(--muted);
-        max-width: 60ch;
-        margin: 22px auto 0;
-        line-height: 1.55;
+        max-width: 58ch;
+        margin: 26px auto 0;
+        line-height: 1.6;
       }
       .cta {
         display: flex;
         gap: 12px;
         justify-content: center;
         flex-wrap: wrap;
-        margin-top: 32px;
+        margin-top: 36px;
       }
       .cta .sub {
-        margin-top: 12px;
+        margin-top: 14px;
         font-size: 13px;
         color: var(--muted);
         width: 100%;
@@ -208,7 +231,10 @@
 
       /* sections */
       section {
-        padding: 48px 0;
+        padding: 72px 0;
+      }
+      section + section {
+        padding-top: 0;
       }
       h2 {
         font-family: var(--font-display);
@@ -216,24 +242,21 @@
         letter-spacing: -0.02em;
         font-size: clamp(26px, 3.4vw, 38px);
         text-align: center;
-        margin: 0 0 8px;
+        margin: 0 0 12px;
       }
       .sub2 {
         text-align: center;
         color: var(--muted);
-        margin: 0 auto 32px;
+        margin: 0 auto 40px;
         max-width: 52ch;
+        line-height: 1.55;
       }
       .grid {
         display: grid;
-        gap: 16px;
+        gap: 18px;
       }
-      .steps {
-        grid-template-columns: repeat(3, 1fr);
-      }
-      .features {
-        grid-template-columns: repeat(3, 1fr);
-      }
+      .steps,
+      .features,
       .downloads {
         grid-template-columns: repeat(3, 1fr);
       }
@@ -241,7 +264,7 @@
         background: color-mix(in srgb, var(--panel), transparent 18%);
         border: 1px solid color-mix(in srgb, var(--border), transparent 40%);
         border-radius: 16px;
-        padding: 22px;
+        padding: 26px;
       }
       .card .n {
         font-family: var(--font-display);
@@ -254,14 +277,14 @@
       }
       .card h3 {
         font-family: var(--font-display);
-        margin: 10px 0 6px;
+        margin: 12px 0 8px;
         font-size: 17px;
       }
       .card p {
         margin: 0;
         color: var(--muted);
         font-size: 14px;
-        line-height: 1.5;
+        line-height: 1.55;
       }
       .dlcard {
         text-align: center;
@@ -275,29 +298,28 @@
       .dlcard .meta {
         color: var(--muted);
         font-size: 13px;
-        margin-bottom: 14px;
+        margin-bottom: 16px;
       }
       .dlcard .alt {
         display: block;
-        margin-top: 8px;
+        margin-top: 10px;
         font-size: 12px;
         color: var(--muted);
       }
       .note {
         max-width: 64ch;
-        margin: 28px auto 0;
+        margin: 36px auto 0;
         text-align: center;
         color: var(--muted);
         font-size: 13px;
-        line-height: 1.6;
+        line-height: 1.65;
       }
 
       footer {
         position: relative;
         z-index: 1;
         border-top: 1px solid color-mix(in srgb, var(--border), transparent 55%);
-        margin-top: 32px;
-        padding: 26px 0 40px;
+        padding: 28px 0 44px;
       }
       .footrow {
         display: flex;
@@ -322,6 +344,9 @@
         .downloads {
           grid-template-columns: 1fr;
         }
+        section {
+          padding: 56px 0;
+        }
       }
     </style>
   </head>
@@ -342,84 +367,88 @@
         cli<span class="gradient">ply</span><span class="tag">export</span>
       </span>
       <span class="navlinks">
-        <a href="#features">Features</a>
-        <a href="#download">Download</a>
+        <a href="#features" data-i18n="nav.features">Features</a>
+        <a href="#download" data-i18n="nav.download">Download</a>
         <a href="https://github.com/cliply-video/cliply-exporter">GitHub</a>
         <a href="https://cliply.video">cliply.video ↗</a>
+        <span class="langtoggle">
+          <button type="button" data-lang="en">EN</button>
+          <button type="button" data-lang="es">ES</button>
+        </span>
       </span>
     </nav>
 
     <header class="hero wrap">
-      <p class="eyebrow">Open-source · 100% offline</p>
-      <h1>Turn a match into<br /><span class="gradient">shareable clips.</span></h1>
-      <p class="lead">
+      <p class="eyebrow" data-i18n="hero.eyebrow">Open-source · 100% offline</p>
+      <h1><span data-i18n="hero.titleA">Turn a match into</span><br /><span class="gradient" data-i18n="hero.titleB">shareable clips.</span></h1>
+      <p class="lead" data-i18n="hero.lead">
         Paste a YouTube link, drop in your SportsCode / Nacsport analysis XML, and
         export ready-to-cut MP4s — folders per tag and reels included. No account,
         no cloud, nothing leaves your machine.
       </p>
       <div class="cta">
-        <a class="btn primary lg" id="primary-dl" href="https://github.com/cliply-video/cliply-exporter/releases/latest">Download</a>
-        <a class="btn lg" href="https://github.com/cliply-video/cliply-exporter">View on GitHub</a>
-        <span class="sub" id="dl-sub">Free &amp; open-source · macOS · Windows · Linux</span>
+        <a class="btn primary lg" id="primary-dl" href="https://github.com/cliply-video/cliply-exporter/releases/latest" data-i18n="hero.download">Download</a>
+        <a class="btn lg" href="https://github.com/cliply-video/cliply-exporter" data-i18n="hero.github">View on GitHub</a>
+        <span class="sub" id="dl-sub" data-i18n="hero.sub">Free &amp; open-source · macOS · Windows · Linux</span>
       </div>
     </header>
 
     <section class="wrap">
-      <h2>How it works</h2>
+      <h2 data-i18n="how.h2">How it works</h2>
       <div class="grid steps">
         <div class="card">
           <div class="n">01</div>
-          <h3>Paste a link</h3>
-          <p>Any YouTube URL or video ID — downloaded locally with yt-dlp.</p>
+          <h3 data-i18n="s1.t">Paste a link</h3>
+          <p data-i18n="s1.d">Any YouTube URL or video ID — downloaded locally with yt-dlp.</p>
         </div>
         <div class="card">
           <div class="n">02</div>
-          <h3>Import XML</h3>
-          <p>SportsCode / Nacsport tags become colored clips. Optional — or just keep the video.</p>
+          <h3 data-i18n="s2.t">Import XML</h3>
+          <p data-i18n="s2.d">SportsCode / Nacsport tags become colored clips. Optional — or just keep the video.</p>
         </div>
         <div class="card">
           <div class="n">03</div>
-          <h3>Export</h3>
-          <p>MP4s in per-tag folders, plus reels. Stream-copy fast, or re-encode.</p>
+          <h3 data-i18n="s3.t">Export</h3>
+          <p data-i18n="s3.d">MP4s in per-tag folders, plus reels. Stream-copy fast, or re-encode.</p>
         </div>
       </div>
     </section>
 
     <section id="features" class="wrap">
-      <h2>Built for analysts</h2>
-      <p class="sub2">Everything runs on your machine. No sign-up, no upload, no telemetry.</p>
+      <h2 data-i18n="feat.h2">Built for analysts</h2>
+      <p class="sub2" data-i18n="feat.sub">Everything runs on your machine. No sign-up, no upload, no telemetry.</p>
       <div class="grid features">
-        <div class="card"><h3>100% offline</h3><p>Nothing leaves your computer. Works on the plane, on the bus, at the pitch.</p></div>
-        <div class="card"><h3>Your tags, your colors</h3><p>Reads the colors and codes straight from your analysis XML.</p></div>
-        <div class="card"><h3>Folders &amp; reels</h3><p>One MP4 per clip in tidy per-tag folders, plus per-tag and combined reels.</p></div>
-        <div class="card"><h3>Watch &amp; pick</h3><p>Preview the full video, select exactly the clips you want, export.</p></div>
-        <div class="card"><h3>English &amp; Español</h3><p>Switch language any time. More welcome via pull request.</p></div>
-        <div class="card"><h3>Open-source</h3><p>Apache-2.0. Powered by cliply's clip engine. Inspect it, fork it, ship it.</p></div>
+        <div class="card"><h3 data-i18n="f1.t">100% offline</h3><p data-i18n="f1.d">Nothing leaves your computer. Works on the plane, on the bus, at the pitch.</p></div>
+        <div class="card"><h3 data-i18n="f2.t">Your tags, your colors</h3><p data-i18n="f2.d">Reads the colors and codes straight from your analysis XML.</p></div>
+        <div class="card"><h3 data-i18n="f3.t">Folders &amp; reels</h3><p data-i18n="f3.d">One MP4 per clip in tidy per-tag folders, plus per-tag and combined reels.</p></div>
+        <div class="card"><h3 data-i18n="f4.t">Watch &amp; pick</h3><p data-i18n="f4.d">Preview the full video, select exactly the clips you want, export.</p></div>
+        <div class="card"><h3 data-i18n="f5.t">English &amp; Español</h3><p data-i18n="f5.d">Switch language any time. More welcome via pull request.</p></div>
+        <div class="card"><h3 data-i18n="f6.t">Open-source</h3><p data-i18n="f6.d">Apache-2.0. Powered by cliply's clip engine. Inspect it, fork it, ship it.</p></div>
       </div>
     </section>
 
     <section id="download" class="wrap">
-      <h2>Download</h2>
-      <p class="sub2">Latest release · v0.1.0 · free forever.</p>
+      <h2 data-i18n="dl.h2">Download</h2>
+      <p class="sub2" data-i18n="dl.sub">Latest release · v0.1.0 · free forever.</p>
       <div class="grid downloads">
         <div class="card dlcard">
           <div class="os">macOS</div>
-          <div class="meta">Universal · Intel &amp; Apple Silicon</div>
-          <a class="btn primary" href="https://github.com/cliply-video/cliply-exporter/releases/download/v0.1.0/Cliply.Export_0.1.0_universal.dmg">Download .dmg</a>
+          <div class="meta" data-i18n="dl.macMeta">Universal · Intel &amp; Apple Silicon</div>
+          <a class="btn primary" href="https://github.com/cliply-video/cliply-exporter/releases/download/v0.1.0/Cliply.Export_0.1.0_universal.dmg" data-i18n="dl.dmg">Download .dmg</a>
         </div>
         <div class="card dlcard">
           <div class="os">Windows</div>
-          <div class="meta">64-bit installer</div>
-          <a class="btn primary" href="https://github.com/cliply-video/cliply-exporter/releases/download/v0.1.0/Cliply.Export_0.1.0_x64-setup.exe">Download .exe</a>
+          <div class="meta" data-i18n="dl.winMeta">64-bit installer</div>
+          <a class="btn primary" href="https://github.com/cliply-video/cliply-exporter/releases/download/v0.1.0/Cliply.Export_0.1.0_x64-setup.exe" data-i18n="dl.exe">Download .exe</a>
         </div>
         <div class="card dlcard">
           <div class="os">Linux</div>
-          <div class="meta">AppImage or Debian package</div>
-          <a class="btn primary" href="https://github.com/cliply-video/cliply-exporter/releases/download/v0.1.0/Cliply.Export_0.1.0_amd64.AppImage">Download .AppImage</a>
-          <a class="alt" href="https://github.com/cliply-video/cliply-exporter/releases/download/v0.1.0/Cliply.Export_0.1.0_amd64.deb">or get the .deb</a>
+          <div class="meta" data-i18n="dl.linuxMeta">AppImage or Debian package</div>
+          <a class="btn primary" href="https://github.com/cliply-video/cliply-exporter/releases/download/v0.1.0/Cliply.Export_0.1.0_amd64.AppImage" data-i18n="dl.appimage">Download .AppImage</a>
+          <a class="alt" href="https://github.com/cliply-video/cliply-exporter/releases/download/v0.1.0/Cliply.Export_0.1.0_amd64.deb" data-i18n="dl.deb">or get the .deb</a>
         </div>
       </div>
-      <p class="note">
+      <p class="note" data-i18n-html="dl.note">
         Builds are currently <strong>unsigned</strong>. On macOS, right-click the app →
         <strong>Open</strong> the first time. On Windows, SmartScreen → <strong>More info</strong> →
         <strong>Run anyway</strong>. On first launch the app fetches ffmpeg + yt-dlp from their
@@ -429,32 +458,158 @@
 
     <footer>
       <div class="wrap footrow">
-        <span>Open-source · 100% offline · powered by cliply's clip engine</span>
+        <span data-i18n="foot.tagline">Open-source · 100% offline · powered by cliply's clip engine</span>
         <span>
           <a href="https://github.com/cliply-video/cliply-exporter">GitHub</a> ·
-          Need cloud, teams &amp; live sharing? <a href="https://cliply.video">cliply.video ↗</a>
+          <span data-i18n="foot.cloud">Need cloud, teams &amp; live sharing?</span>
+          <a href="https://cliply.video">cliply.video ↗</a>
         </span>
       </div>
     </footer>
 
     <script>
-      // Highlight the download for the visitor's OS.
-      (function () {
+      var I18N = {
+        en: {
+          "nav.features": "Features",
+          "nav.download": "Download",
+          "hero.eyebrow": "Open-source · 100% offline",
+          "hero.titleA": "Turn a match into",
+          "hero.titleB": "shareable clips.",
+          "hero.lead": "Paste a YouTube link, drop in your SportsCode / Nacsport analysis XML, and export ready-to-cut MP4s — folders per tag and reels included. No account, no cloud, nothing leaves your machine.",
+          "hero.download": "Download",
+          "hero.github": "View on GitHub",
+          "hero.sub": "Free & open-source · macOS · Windows · Linux",
+          "how.h2": "How it works",
+          "s1.t": "Paste a link",
+          "s1.d": "Any YouTube URL or video ID — downloaded locally with yt-dlp.",
+          "s2.t": "Import XML",
+          "s2.d": "SportsCode / Nacsport tags become colored clips. Optional — or just keep the video.",
+          "s3.t": "Export",
+          "s3.d": "MP4s in per-tag folders, plus reels. Stream-copy fast, or re-encode.",
+          "feat.h2": "Built for analysts",
+          "feat.sub": "Everything runs on your machine. No sign-up, no upload, no telemetry.",
+          "f1.t": "100% offline",
+          "f1.d": "Nothing leaves your computer. Works on the plane, on the bus, at the pitch.",
+          "f2.t": "Your tags, your colors",
+          "f2.d": "Reads the colors and codes straight from your analysis XML.",
+          "f3.t": "Folders & reels",
+          "f3.d": "One MP4 per clip in tidy per-tag folders, plus per-tag and combined reels.",
+          "f4.t": "Watch & pick",
+          "f4.d": "Preview the full video, select exactly the clips you want, export.",
+          "f5.t": "English & Español",
+          "f5.d": "Switch language any time. More welcome via pull request.",
+          "f6.t": "Open-source",
+          "f6.d": "Apache-2.0. Powered by cliply's clip engine. Inspect it, fork it, ship it.",
+          "dl.h2": "Download",
+          "dl.sub": "Latest release · v0.1.0 · free forever.",
+          "dl.macMeta": "Universal · Intel & Apple Silicon",
+          "dl.dmg": "Download .dmg",
+          "dl.winMeta": "64-bit installer",
+          "dl.exe": "Download .exe",
+          "dl.linuxMeta": "AppImage or Debian package",
+          "dl.appimage": "Download .AppImage",
+          "dl.deb": "or get the .deb",
+          "dl.note": "Builds are currently <strong>unsigned</strong>. On macOS, right-click the app → <strong>Open</strong> the first time. On Windows, SmartScreen → <strong>More info</strong> → <strong>Run anyway</strong>. On first launch the app fetches ffmpeg + yt-dlp from their official sources (verified by checksum).",
+          "foot.tagline": "Open-source · 100% offline · powered by cliply's clip engine",
+          "foot.cloud": "Need cloud, teams & live sharing?",
+          "dl.for": "Download for ",
+          "dl.also": "Free & open-source · also on ",
+          "dl.all": "all downloads",
+        },
+        es: {
+          "nav.features": "Funciones",
+          "nav.download": "Descargar",
+          "hero.eyebrow": "Código abierto · 100% offline",
+          "hero.titleA": "Convertí un partido en",
+          "hero.titleB": "clips para compartir.",
+          "hero.lead": "Pegá un enlace de YouTube, sumá tu XML de análisis de SportsCode / Nacsport y exportá MP4s listos — carpetas por etiqueta y reels incluidos. Sin cuenta, sin nube, nada sale de tu equipo.",
+          "hero.download": "Descargar",
+          "hero.github": "Ver en GitHub",
+          "hero.sub": "Gratis y código abierto · macOS · Windows · Linux",
+          "how.h2": "Cómo funciona",
+          "s1.t": "Pegá un enlace",
+          "s1.d": "Cualquier URL de YouTube o ID de video — se descarga local con yt-dlp.",
+          "s2.t": "Importá XML",
+          "s2.d": "Las etiquetas de SportsCode / Nacsport se vuelven clips con color. Opcional — o quedate con el video.",
+          "s3.t": "Exportá",
+          "s3.d": "MP4s en carpetas por etiqueta, más reels. Rápido por stream-copy, o recodificá.",
+          "feat.h2": "Hecho para analistas",
+          "feat.sub": "Todo corre en tu equipo. Sin registro, sin subidas, sin telemetría.",
+          "f1.t": "100% offline",
+          "f1.d": "Nada sale de tu computadora. Funciona en el avión, en el colectivo, en la cancha.",
+          "f2.t": "Tus etiquetas, tus colores",
+          "f2.d": "Lee los colores y códigos directo de tu XML de análisis.",
+          "f3.t": "Carpetas y reels",
+          "f3.d": "Un MP4 por clip en carpetas por etiqueta, más reels por etiqueta y combinados.",
+          "f4.t": "Mirá y elegí",
+          "f4.d": "Previsualizá el video completo, elegí exactamente los clips que querés, exportá.",
+          "f5.t": "Inglés y Español",
+          "f5.d": "Cambiá el idioma cuando quieras. Se aceptan más vía pull request.",
+          "f6.t": "Código abierto",
+          "f6.d": "Apache-2.0. Con el motor de clips de cliply. Miralo, forkealo, publicalo.",
+          "dl.h2": "Descargar",
+          "dl.sub": "Última versión · v0.1.0 · gratis para siempre.",
+          "dl.macMeta": "Universal · Intel y Apple Silicon",
+          "dl.dmg": "Descargar .dmg",
+          "dl.winMeta": "Instalador 64-bit",
+          "dl.exe": "Descargar .exe",
+          "dl.linuxMeta": "AppImage o paquete Debian",
+          "dl.appimage": "Descargar .AppImage",
+          "dl.deb": "o bajá el .deb",
+          "dl.note": "Los builds están <strong>sin firmar</strong> por ahora. En macOS, clic derecho en la app → <strong>Abrir</strong> la primera vez. En Windows, SmartScreen → <strong>Más información</strong> → <strong>Ejecutar de todas formas</strong>. En el primer inicio la app descarga ffmpeg + yt-dlp de sus fuentes oficiales (verificadas por checksum).",
+          "foot.tagline": "Código abierto · 100% offline · con el motor de clips de cliply",
+          "foot.cloud": "¿Nube, equipos y compartir en vivo?",
+          "dl.for": "Descargar para ",
+          "dl.also": "Gratis y código abierto · también en ",
+          "dl.all": "todas las descargas",
+        },
+      };
+
+      var DL_BASE = "https://github.com/cliply-video/cliply-exporter/releases/download/v0.1.0/";
+
+      function osInfo() {
         var ua = navigator.userAgent;
-        var base = "https://github.com/cliply-video/cliply-exporter/releases/download/v0.1.0/";
-        var btn = document.getElementById("primary-dl");
-        var sub = document.getElementById("dl-sub");
-        var os = null;
-        if (/Mac/i.test(ua)) os = { label: "Download for macOS", file: "Cliply.Export_0.1.0_universal.dmg" };
-        else if (/Windows/i.test(ua)) os = { label: "Download for Windows", file: "Cliply.Export_0.1.0_x64-setup.exe" };
-        else if (/Linux/i.test(ua) && !/Android/i.test(ua)) os = { label: "Download for Linux", file: "Cliply.Export_0.1.0_amd64.AppImage" };
+        if (/Mac/i.test(ua)) return { name: "macOS", file: "Cliply.Export_0.1.0_universal.dmg", others: ["Windows", "Linux"] };
+        if (/Windows/i.test(ua)) return { name: "Windows", file: "Cliply.Export_0.1.0_x64-setup.exe", others: ["macOS", "Linux"] };
+        if (/Linux/i.test(ua) && !/Android/i.test(ua)) return { name: "Linux", file: "Cliply.Export_0.1.0_amd64.AppImage", others: ["macOS", "Windows"] };
+        return null;
+      }
+
+      function apply(lang) {
+        var dict = I18N[lang] || I18N.en;
+        document.documentElement.lang = lang;
+        document.querySelectorAll("[data-i18n]").forEach(function (el) {
+          var v = dict[el.getAttribute("data-i18n")];
+          if (v != null) el.textContent = v;
+        });
+        document.querySelectorAll("[data-i18n-html]").forEach(function (el) {
+          var v = dict[el.getAttribute("data-i18n-html")];
+          if (v != null) el.innerHTML = v;
+        });
+        document.querySelectorAll(".langtoggle button").forEach(function (b) {
+          b.classList.toggle("on", b.getAttribute("data-lang") === lang);
+        });
+        // OS-aware primary download (after text is applied).
+        var os = osInfo();
         if (os) {
-          btn.textContent = os.label;
-          btn.href = base + os.file;
-          sub.innerHTML = "Free &amp; open-source · also on " +
-            (/(Mac)/i.test(ua) ? "Windows &amp; Linux" : /Windows/i.test(ua) ? "macOS &amp; Linux" : "macOS &amp; Windows") +
-            " — <a href='#download' style='color:var(--accent)'>all downloads</a>";
+          var btn = document.getElementById("primary-dl");
+          btn.textContent = dict["dl.for"] + os.name;
+          btn.href = DL_BASE + os.file;
+          document.getElementById("dl-sub").innerHTML =
+            dict["dl.also"] + os.others.join(" & ") +
+            " — <a href='#download' style='color:var(--accent)'>" + dict["dl.all"] + "</a>";
         }
+        try { localStorage.setItem("cliply.locale", lang); } catch (e) {}
+      }
+
+      (function () {
+        var saved = null;
+        try { saved = localStorage.getItem("cliply.locale"); } catch (e) {}
+        var lang = saved === "en" || saved === "es" ? saved : (/^es/i.test(navigator.language || "") ? "es" : "en");
+        document.querySelectorAll(".langtoggle button").forEach(function (b) {
+          b.addEventListener("click", function () { apply(b.getAttribute("data-lang")); });
+        });
+        apply(lang);
       })();
     </script>
   </body>
