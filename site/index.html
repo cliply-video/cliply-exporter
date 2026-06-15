@@ -315,6 +315,58 @@
         line-height: 1.65;
       }
 
+      .callout {
+        max-width: 640px;
+        margin: 40px auto 0;
+        text-align: left;
+        background: color-mix(in srgb, var(--panel), transparent 22%);
+        border: 1px solid color-mix(in srgb, var(--border), transparent 35%);
+        border-left: 3px solid var(--accent);
+        border-radius: 14px;
+        padding: 22px 24px;
+        transition: box-shadow 0.2s ease;
+      }
+      .callout.hot {
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent), transparent 55%);
+      }
+      .callout h3 {
+        font-family: var(--font-display);
+        font-size: 17px;
+        margin: 0 0 8px;
+      }
+      .callout p {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.55;
+        margin: 8px 0;
+      }
+      .callout ol {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.6;
+        margin: 8px 0;
+        padding-left: 20px;
+      }
+      .callout li {
+        margin: 5px 0;
+      }
+      .callout strong {
+        color: var(--text);
+      }
+      code.cmd {
+        display: block;
+        margin-top: 8px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12.5px;
+        background: var(--bg-deep);
+        border: 1px solid color-mix(in srgb, var(--border), transparent 40%);
+        border-radius: 8px;
+        padding: 11px 13px;
+        color: var(--text);
+        overflow-x: auto;
+        user-select: all;
+      }
+
       footer {
         position: relative;
         z-index: 1;
@@ -448,11 +500,23 @@
           <a class="alt" href="https://github.com/cliply-video/cliply-exporter/releases/download/v0.1.0/Cliply.Export_0.1.0_amd64.deb" data-i18n="dl.deb">or get the .deb</a>
         </div>
       </div>
-      <p class="note" data-i18n-html="dl.note">
-        Builds are currently <strong>unsigned</strong>. On macOS, right-click the app →
-        <strong>Open</strong> the first time. On Windows, SmartScreen → <strong>More info</strong> →
-        <strong>Run anyway</strong>. On first launch the app fetches ffmpeg + yt-dlp from their
-        official sources (verified by checksum).
+      <div class="callout" id="macnote">
+        <h3 data-i18n="mac.h">Running it on macOS</h3>
+        <p data-i18n="mac.lead">
+          Cliply Export isn't notarized yet, so macOS blocks unsigned apps the
+          first time. One-time fix:
+        </p>
+        <ol>
+          <li data-i18n-html="mac.s1">Open the .dmg and drag <strong>Cliply Export</strong> into Applications.</li>
+          <li data-i18n-html="mac.s2">Double-click it once — you'll get a security warning. That's expected; close it.</li>
+          <li data-i18n-html="mac.s3">Open <strong>System Settings → Privacy &amp; Security</strong>, scroll down, and click <strong>Open Anyway</strong>. Confirm once — done.</li>
+        </ol>
+        <p data-i18n="mac.term">Prefer Terminal? This clears the quarantine flag on any macOS version:</p>
+        <code class="cmd">xattr -dr com.apple.quarantine "/Applications/Cliply Export.app"</code>
+      </div>
+      <p class="note">
+        <span data-i18n-html="win.note"><strong>Windows:</strong> on the SmartScreen prompt, click <strong>More info → Run anyway</strong>.</span>
+        <span data-i18n="firstrun.note">On first launch the app downloads ffmpeg + yt-dlp from their official sources (checksum-verified).</span>
       </p>
     </section>
 
@@ -509,7 +573,14 @@
           "dl.linuxMeta": "AppImage or Debian package",
           "dl.appimage": "Download .AppImage",
           "dl.deb": "or get the .deb",
-          "dl.note": "Builds are currently <strong>unsigned</strong>. On macOS, right-click the app → <strong>Open</strong> the first time. On Windows, SmartScreen → <strong>More info</strong> → <strong>Run anyway</strong>. On first launch the app fetches ffmpeg + yt-dlp from their official sources (verified by checksum).",
+          "mac.h": "Running it on macOS",
+          "mac.lead": "Cliply Export isn't notarized yet, so macOS blocks unsigned apps the first time. One-time fix:",
+          "mac.s1": "Open the .dmg and drag <strong>Cliply Export</strong> into Applications.",
+          "mac.s2": "Double-click it once — you'll get a security warning. That's expected; close it.",
+          "mac.s3": "Open <strong>System Settings → Privacy &amp; Security</strong>, scroll down, and click <strong>Open Anyway</strong>. Confirm once — done.",
+          "mac.term": "Prefer Terminal? This clears the quarantine flag on any macOS version:",
+          "win.note": "<strong>Windows:</strong> on the SmartScreen prompt, click <strong>More info → Run anyway</strong>.",
+          "firstrun.note": "On first launch the app downloads ffmpeg + yt-dlp from their official sources (checksum-verified).",
           "foot.tagline": "Open-source · 100% offline · powered by cliply's clip engine",
           "foot.cloud": "Need cloud, teams & live sharing?",
           "dl.for": "Download for ",
@@ -556,7 +627,14 @@
           "dl.linuxMeta": "AppImage o paquete Debian",
           "dl.appimage": "Descargar .AppImage",
           "dl.deb": "o bajá el .deb",
-          "dl.note": "Los builds están <strong>sin firmar</strong> por ahora. En macOS, clic derecho en la app → <strong>Abrir</strong> la primera vez. En Windows, SmartScreen → <strong>Más información</strong> → <strong>Ejecutar de todas formas</strong>. En el primer inicio la app descarga ffmpeg + yt-dlp de sus fuentes oficiales (verificadas por checksum).",
+          "mac.h": "Cómo abrirla en macOS",
+          "mac.lead": "Cliply Export todavía no está notarizada, así que macOS bloquea apps sin firmar la primera vez. Solución (una sola vez):",
+          "mac.s1": "Abrí el .dmg y arrastrá <strong>Cliply Export</strong> a Aplicaciones.",
+          "mac.s2": "Hacé doble clic una vez — vas a ver una advertencia de seguridad. Es normal, cerrala.",
+          "mac.s3": "Abrí <strong>Ajustes del Sistema → Privacidad y seguridad</strong>, bajá hasta el final y tocá <strong>Abrir igualmente</strong>. Confirmá una vez — listo.",
+          "mac.term": "¿Preferís la Terminal? Esto quita la marca de cuarentena en cualquier versión de macOS:",
+          "win.note": "<strong>Windows:</strong> en el aviso de SmartScreen, hacé clic en <strong>Más información → Ejecutar de todas formas</strong>.",
+          "firstrun.note": "En el primer inicio la app descarga ffmpeg + yt-dlp de sus fuentes oficiales (verificadas por checksum).",
           "foot.tagline": "Código abierto · 100% offline · con el motor de clips de cliply",
           "foot.cloud": "¿Nube, equipos y compartir en vivo?",
           "dl.for": "Descargar para ",
@@ -599,6 +677,8 @@
             dict["dl.also"] + os.others.join(" & ") +
             " — <a href='#download' style='color:var(--accent)'>" + dict["dl.all"] + "</a>";
         }
+        var callout = document.querySelector(".callout");
+        if (callout) callout.classList.toggle("hot", !!(os && os.name === "macOS"));
         try { localStorage.setItem("cliply.locale", lang); } catch (e) {}
       }
 
