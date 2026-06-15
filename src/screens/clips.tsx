@@ -92,7 +92,7 @@ export function Clips({
   const allSelected = clips.length > 0 && sel.size === clips.length;
 
   return (
-    <div style={{ padding: 24, maxWidth: 1000, margin: "0 auto" }}>
+    <div style={{ padding: "20px 28px" }}>
       <div
         className="row"
         style={{ justifyContent: "space-between", marginBottom: 16 }}
@@ -145,8 +145,8 @@ export function Clips({
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-              gap: 12,
+              gridTemplateColumns: "repeat(auto-fill, minmax(168px, 1fr))",
+              gap: 10,
             }}
           >
             {g.clips.map((c) => (
