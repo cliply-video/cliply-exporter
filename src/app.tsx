@@ -39,6 +39,7 @@ export function App() {
       <ImportXml
         videoId={step.videoId}
         onDone={() => setStep({ name: "clips", videoId: step.videoId })}
+        onHome={() => setStep({ name: "home" })}
       />
     );
   }

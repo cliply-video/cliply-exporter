@@ -1,5 +1,6 @@
 import { listen } from "@tauri-apps/api/event";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Logo } from "../components/logo";
 import { cancelDownload, downloadYoutube } from "../lib/api";
 import { createVideo } from "../lib/db";
 
@@ -56,8 +57,11 @@ export function Home({ onVideo }: { onVideo: (videoId: string) => void }) {
   return (
     <div className="center">
       <div className="card">
-        <h1>Cliply OSS</h1>
-        <p className="muted">Paste a YouTube URL to download the source video.</p>
+        <Logo />
+        <p className="muted">
+          Paste a YouTube URL to download the video — then import an analysis XML
+          to cut clips, or just keep the video.
+        </p>
         <input
           type="url"
           placeholder="https://www.youtube.com/watch?v=…"

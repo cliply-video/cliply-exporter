@@ -43,6 +43,14 @@ fn decode(buf: &[u8]) -> String {
     String::from_utf8_lossy(buf).into_owned()
 }
 
+/// Copies a file (used to save a downloaded video out to a user-chosen path
+/// when no XML is imported).
+#[tauri::command]
+pub fn copy_file(src: String, dest: String) -> Result<(), String> {
+    std::fs::copy(&src, &dest).map_err(es)?;
+    Ok(())
+}
+
 fn posters_dir(app: &AppHandle) -> Result<PathBuf, String> {
     let dir = app.path().app_data_dir().map_err(es)?.join("posters");
     std::fs::create_dir_all(&dir).map_err(es)?;

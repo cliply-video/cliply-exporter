@@ -28,6 +28,9 @@ export const readXmlFile = (path: string) =>
 export const generatePoster = (clipId: string, src: string, tSec: number) =>
   invoke<string>("generate_poster", { clipId, src, tSec });
 
+export const copyFile = (src: string, dest: string) =>
+  invoke<void>("copy_file", { src, dest });
+
 export type ExportClip = {
   name: string | null;
   startSec: number;

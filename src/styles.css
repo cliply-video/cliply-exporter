@@ -1,12 +1,17 @@
+/* cliply "Fairy Floss" dark palette (ported from app/globals.css dark theme). */
 :root {
   color-scheme: dark;
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  --bg: #0e0e12;
-  --panel: #17171f;
-  --border: #26262f;
-  --text: #e7e7ee;
-  --muted: #9a9aa8;
-  --accent: #e9b949;
+  --bg: #46415c;
+  --panel: #534d6b;
+  --panel-2: #5f5979;
+  --border: #645d80;
+  --text: #f8f8f2;
+  --muted: #cdbfe0;
+  --accent: #ffb8d1; /* primary (pink) — CTAs, active/selected */
+  --accent-fg: #43375a;
+  --destructive: #ff857f;
+  --brand-gradient: linear-gradient(120deg, #ff9ecd, #b88cf0, #8ab0f8);
 }
 
 * {
@@ -15,23 +20,35 @@
 
 body {
   margin: 0;
-  background: var(--bg);
   color: var(--text);
+  background:
+    radial-gradient(
+      1100px 480px at 12% -8%,
+      color-mix(in srgb, var(--accent), transparent 88%),
+      transparent 62%
+    ),
+    var(--bg);
+  min-height: 100vh;
 }
 
 button {
   font: inherit;
   cursor: pointer;
   border: 1px solid var(--border);
-  background: var(--panel);
+  background: var(--panel-2);
   color: var(--text);
   border-radius: 8px;
   padding: 8px 14px;
+  transition: filter 0.15s ease;
+}
+
+button:hover:not(:disabled) {
+  filter: brightness(1.08);
 }
 
 button.primary {
   background: var(--accent);
-  color: #1a1405;
+  color: var(--accent-fg);
   border-color: var(--accent);
   font-weight: 600;
 }
@@ -49,11 +66,12 @@ button:disabled {
 }
 
 .card {
-  width: min(520px, 100%);
-  background: var(--panel);
+  width: min(540px, 100%);
+  background: color-mix(in srgb, var(--panel), transparent 8%);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 28px;
+  box-shadow: 0 12px 40px -16px rgba(0, 0, 0, 0.5);
 }
 
 .muted {
@@ -66,6 +84,38 @@ button:disabled {
   gap: 10px;
 }
 
+/* brand logo */
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.wordmark {
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  text-transform: lowercase;
+  line-height: 1;
+}
+
+.brand {
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.oss {
+  margin-left: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  vertical-align: super;
+}
+
 .bar {
   height: 8px;
   border-radius: 999px;
@@ -76,6 +126,6 @@ button:disabled {
 .bar > span {
   display: block;
   height: 100%;
-  background: var(--accent);
+  background: var(--brand-gradient);
   transition: width 0.2s ease;
 }

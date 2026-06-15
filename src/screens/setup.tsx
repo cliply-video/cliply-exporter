@@ -1,5 +1,6 @@
 import { listen } from "@tauri-apps/api/event";
 import { useCallback, useEffect, useState } from "react";
+import { Logo } from "../components/logo";
 import { type BinariesStatus, downloadBinaries } from "../lib/api";
 
 export function Setup({
@@ -39,7 +40,8 @@ export function Setup({
   return (
     <div className="center">
       <div className="card">
-        <h1>Setting up</h1>
+        <Logo />
+        <h2>Setting up</h2>
         <p className="muted">
           Cliply needs <code>ffmpeg</code> and <code>yt-dlp</code>. They
           download once from their official sources, are verified by checksum,

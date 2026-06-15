@@ -42,6 +42,7 @@ pub fn run() {
             download::cancel_download,
             media::read_xml_file,
             media::generate_poster,
+            media::copy_file,
             export::export_clips
         ])
         .run(tauri::generate_context!())
