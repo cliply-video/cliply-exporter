@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cliply Export — open-source offline clip cutter</title>
+    <meta
+      name="description"
+      content="Free, open-source desktop app. Paste a YouTube link, import your SportsCode / Nacsport XML, and export ready-to-share MP4 clips with ffmpeg. 100% offline — no account, no cloud."
+    />
+    <meta property="og:title" content="Cliply Export" />
+    <meta
+      property="og:description"
+      content="Open-source offline clip cutter: YouTube + analysis XML in, MP4 clips out."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://exporter.cliply.video" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #46415c;
+        --bg-deep: #3a3550;
+        --panel: #534d6b;
+        --panel-2: #5f5979;
+        --border: #6b6488;
+        --text: #f8f8f2;
+        --muted: #cdbfe0;
+        --accent: #ffb8d1;
+        --accent-fg: #2c2440;
+        --brand: linear-gradient(115deg, #ff9ecd 0%, #b88cf0 48%, #8ab0f8 100%);
+        --font-display: "Space Grotesk", system-ui, sans-serif;
+        --font-body: "Hanken Grotesk", system-ui, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        font-family: var(--font-body);
+        color: var(--text);
+        background: var(--bg-deep);
+        overflow-x: hidden;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: -20%;
+        z-index: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(40% 38% at 16% 8%, color-mix(in srgb, #ff9ecd, transparent 80%), transparent 70%),
+          radial-gradient(44% 40% at 88% 14%, color-mix(in srgb, #8ab0f8, transparent 82%), transparent 70%),
+          radial-gradient(50% 46% at 72% 92%, color-mix(in srgb, #b88cf0, transparent 84%), transparent 72%);
+      }
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        opacity: 0.045;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      }
+      .wrap {
+        position: relative;
+        z-index: 1;
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      a {
+        color: inherit;
+      }
+      .gradient {
+        background: var(--brand);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      /* nav */
+      nav {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 24px;
+        max-width: 1080px;
+        margin: 0 auto;
+      }
+      .logo {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 21px;
+        letter-spacing: -0.03em;
+        text-transform: lowercase;
+      }
+      .logo .tag {
+        margin-left: 6px;
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        color: var(--muted);
+        vertical-align: super;
+      }
+      .navlinks {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        font-size: 14px;
+      }
+      .navlinks a {
+        color: var(--muted);
+        text-decoration: none;
+      }
+      .navlinks a:hover {
+        color: var(--text);
+      }
+
+      /* buttons (match cliply.video) */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--font-body);
+        font-weight: 600;
+        font-size: 15px;
+        text-decoration: none;
+        border-radius: 6px;
+        padding: 11px 18px;
+        border: 1px solid color-mix(in srgb, var(--border), transparent 25%);
+        background: var(--panel-2);
+        color: var(--text);
+        transition: all 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+        cursor: pointer;
+      }
+      .btn:hover {
+        transform: translateY(-1px);
+        background: color-mix(in srgb, var(--panel-2), white 7%);
+      }
+      .btn.primary {
+        background: var(--accent);
+        color: var(--accent-fg);
+        border-color: transparent;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.22);
+      }
+      .btn.primary:hover {
+        background: color-mix(in srgb, var(--accent), black 7%);
+        box-shadow: 0 10px 26px -10px color-mix(in srgb, var(--accent), transparent 35%);
+      }
+      .btn.lg {
+        font-size: 16px;
+        padding: 14px 22px;
+      }
+
+      /* hero */
+      .hero {
+        padding: 60px 0 40px;
+        text-align: center;
+      }
+      .eyebrow {
+        font-family: var(--font-display);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+      h1 {
+        font-family: var(--font-display);
+        font-weight: 700;
+        letter-spacing: -0.035em;
+        line-height: 0.98;
+        font-size: clamp(40px, 8vw, 84px);
+        margin: 14px 0 0;
+      }
+      .lead {
+        font-size: clamp(16px, 1.8vw, 20px);
+        color: var(--muted);
+        max-width: 60ch;
+        margin: 22px auto 0;
+        line-height: 1.55;
+      }
+      .cta {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 32px;
+      }
+      .cta .sub {
+        margin-top: 12px;
+        font-size: 13px;
+        color: var(--muted);
+        width: 100%;
+      }
+
+      /* sections */
+      section {
+        padding: 48px 0;
+      }
+      h2 {
+        font-family: var(--font-display);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        font-size: clamp(26px, 3.4vw, 38px);
+        text-align: center;
+        margin: 0 0 8px;
+      }
+      .sub2 {
+        text-align: center;
+        color: var(--muted);
+        margin: 0 auto 32px;
+        max-width: 52ch;
+      }
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+      .steps {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .features {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .downloads {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .card {
+        background: color-mix(in srgb, var(--panel), transparent 18%);
+        border: 1px solid color-mix(in srgb, var(--border), transparent 40%);
+        border-radius: 16px;
+        padding: 22px;
+      }
+      .card .n {
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 30px;
+        background: var(--brand);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .card h3 {
+        font-family: var(--font-display);
+        margin: 10px 0 6px;
+        font-size: 17px;
+      }
+      .card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .dlcard {
+        text-align: center;
+      }
+      .dlcard .os {
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 18px;
+        margin-bottom: 4px;
+      }
+      .dlcard .meta {
+        color: var(--muted);
+        font-size: 13px;
+        margin-bottom: 14px;
+      }
+      .dlcard .alt {
+        display: block;
+        margin-top: 8px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .note {
+        max-width: 64ch;
+        margin: 28px auto 0;
+        text-align: center;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      footer {
+        position: relative;
+        z-index: 1;
+        border-top: 1px solid color-mix(in srgb, var(--border), transparent 55%);
+        margin-top: 32px;
+        padding: 26px 0 40px;
+      }
+      .footrow {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .footrow a {
+        color: var(--muted);
+        text-decoration: none;
+      }
+      .footrow a:hover {
+        color: var(--text);
+      }
+
+      @media (max-width: 760px) {
+        .steps,
+        .features,
+        .downloads {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <span class="logo">
+        <svg width="30" height="30" viewBox="0 0 100 100" fill="none" aria-label="cliply">
+          <defs>
+            <linearGradient id="g" x1="16" y1="16" x2="84" y2="84" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#ff9ecd" />
+              <stop offset="0.5" stop-color="#b88cf0" />
+              <stop offset="1" stop-color="#8ab0f8" />
+            </linearGradient>
+          </defs>
+          <path d="M73.3 26.7 A33 33 0 1 0 73.3 73.3" stroke="url(#g)" stroke-width="9" stroke-linecap="round" fill="none" />
+          <path d="M44 33 L71 50 L44 67 Z" fill="url(#g)" stroke="url(#g)" stroke-width="6" stroke-linejoin="round" />
+        </svg>
+        cli<span class="gradient">ply</span><span class="tag">export</span>
+      </span>
+      <span class="navlinks">
+        <a href="#features">Features</a>
+        <a href="#download">Download</a>
+        <a href="https://github.com/cliply-video/cliply-exporter">GitHub</a>
+        <a href="https://cliply.video">cliply.video ↗</a>
+      </span>
+    </nav>
+
+    <header class="hero wrap">
+      <p class="eyebrow">Open-source · 100% offline</p>
+      <h1>Turn a match into<br /><span class="gradient">shareable clips.</span></h1>
+      <p class="lead">
+        Paste a YouTube link, drop in your SportsCode / Nacsport analysis XML, and
+        export ready-to-cut MP4s — folders per tag and reels included. No account,
+        no cloud, nothing leaves your machine.
+      </p>
+      <div class="cta">
+        <a class="btn primary lg" id="primary-dl" href="https://github.com/cliply-video/cliply-exporter/releases/latest">Download</a>
+        <a class="btn lg" href="https://github.com/cliply-video/cliply-exporter">View on GitHub</a>
+        <span class="sub" id="dl-sub">Free &amp; open-source · macOS · Windows · Linux</span>
+      </div>
+    </header>
+
+    <section class="wrap">
+      <h2>How it works</h2>
+      <div class="grid steps">
+        <div class="card">
+          <div class="n">01</div>
+          <h3>Paste a link</h3>
+          <p>Any YouTube URL or video ID — downloaded locally with yt-dlp.</p>
+        </div>
+        <div class="card">
+          <div class="n">02</div>
+          <h3>Import XML</h3>
+          <p>SportsCode / Nacsport tags become colored clips. Optional — or just keep the video.</p>
+        </div>
+        <div class="card">
+          <div class="n">03</div>
+          <h3>Export</h3>
+          <p>MP4s in per-tag folders, plus reels. Stream-copy fast, or re-encode.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="wrap">
+      <h2>Built for analysts</h2>
+      <p class="sub2">Everything runs on your machine. No sign-up, no upload, no telemetry.</p>
+      <div class="grid features">
+        <div class="card"><h3>100% offline</h3><p>Nothing leaves your computer. Works on the plane, on the bus, at the pitch.</p></div>
+        <div class="card"><h3>Your tags, your colors</h3><p>Reads the colors and codes straight from your analysis XML.</p></div>
+        <div class="card"><h3>Folders &amp; reels</h3><p>One MP4 per clip in tidy per-tag folders, plus per-tag and combined reels.</p></div>
+        <div class="card"><h3>Watch &amp; pick</h3><p>Preview the full video, select exactly the clips you want, export.</p></div>
+        <div class="card"><h3>English &amp; Español</h3><p>Switch language any time. More welcome via pull request.</p></div>
+        <div class="card"><h3>Open-source</h3><p>Apache-2.0. Powered by cliply's clip engine. Inspect it, fork it, ship it.</p></div>
+      </div>
+    </section>
+
+    <section id="download" class="wrap">
+      <h2>Download</h2>
+      <p class="sub2">Latest release · v0.1.0 · free forever.</p>
+      <div class="grid downloads">
+        <div class="card dlcard">
+          <div class="os">macOS</div>
+          <div class="meta">Universal · Intel &amp; Apple Silicon</div>
+          <a class="btn primary" href="https://github.com/cliply-video/cliply-exporter/releases/download/v0.1.0/Cliply.Export_0.1.0_universal.dmg">Download .dmg</a>
+        </div>
+        <div class="card dlcard">
+          <div class="os">Windows</div>
+          <div class="meta">64-bit installer</div>
+          <a class="btn primary" href="https://github.com/cliply-video/cliply-exporter/releases/download/v0.1.0/Cliply.Export_0.1.0_x64-setup.exe">Download .exe</a>
+        </div>
+        <div class="card dlcard">
+          <div class="os">Linux</div>
+          <div class="meta">AppImage or Debian package</div>
+          <a class="btn primary" href="https://github.com/cliply-video/cliply-exporter/releases/download/v0.1.0/Cliply.Export_0.1.0_amd64.AppImage">Download .AppImage</a>
+          <a class="alt" href="https://github.com/cliply-video/cliply-exporter/releases/download/v0.1.0/Cliply.Export_0.1.0_amd64.deb">or get the .deb</a>
+        </div>
+      </div>
+      <p class="note">
+        Builds are currently <strong>unsigned</strong>. On macOS, right-click the app →
+        <strong>Open</strong> the first time. On Windows, SmartScreen → <strong>More info</strong> →
+        <strong>Run anyway</strong>. On first launch the app fetches ffmpeg + yt-dlp from their
+        official sources (verified by checksum).
+      </p>
+    </section>
+
+    <footer>
+      <div class="wrap footrow">
+        <span>Open-source · 100% offline · powered by cliply's clip engine</span>
+        <span>
+          <a href="https://github.com/cliply-video/cliply-exporter">GitHub</a> ·
+          Need cloud, teams &amp; live sharing? <a href="https://cliply.video">cliply.video ↗</a>
+        </span>
+      </div>
+    </footer>
+
+    <script>
+      // Highlight the download for the visitor's OS.
+      (function () {
+        var ua = navigator.userAgent;
+        var base = "https://github.com/cliply-video/cliply-exporter/releases/download/v0.1.0/";
+        var btn = document.getElementById("primary-dl");
+        var sub = document.getElementById("dl-sub");
+        var os = null;
+        if (/Mac/i.test(ua)) os = { label: "Download for macOS", file: "Cliply.Export_0.1.0_universal.dmg" };
+        else if (/Windows/i.test(ua)) os = { label: "Download for Windows", file: "Cliply.Export_0.1.0_x64-setup.exe" };
+        else if (/Linux/i.test(ua) && !/Android/i.test(ua)) os = { label: "Download for Linux", file: "Cliply.Export_0.1.0_amd64.AppImage" };
+        if (os) {
+          btn.textContent = os.label;
+          btn.href = base + os.file;
+          sub.innerHTML = "Free &amp; open-source · also on " +
+            (/(Mac)/i.test(ua) ? "Windows &amp; Linux" : /Windows/i.test(ua) ? "macOS &amp; Linux" : "macOS &amp; Windows") +
+            " — <a href='#download' style='color:var(--accent)'>all downloads</a>";
+        }
+      })();
+    </script>
+  </body>
+</html>
