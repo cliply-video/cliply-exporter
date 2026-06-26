@@ -1,6 +1,7 @@
 import { open, save } from "@tauri-apps/plugin-dialog";
 import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { useCallback, useEffect, useState } from "react";
+import { Corners } from "../components/osd";
 import { useT } from "../i18n";
 import { copyFile, readXmlFile } from "../lib/api";
 import { getVideo, saveParsed } from "../lib/db";
@@ -72,6 +73,7 @@ export function ImportXml({
     return (
       <div className="stage">
         <div className="card">
+          <Corners />
           <p className="eyebrow">{t("import.savedEyebrow")}</p>
           <h2>{t("import.savedTitle")}</h2>
           <p className="muted" style={{ wordBreak: "break-all" }}>
@@ -97,6 +99,7 @@ export function ImportXml({
   return (
     <div className="stage">
       <div className="card">
+        <Corners />
         <p className="eyebrow">{t("import.eyebrow")}</p>
         <h2>{t("import.title")}</h2>
         <p className="muted">{t("import.body")}</p>

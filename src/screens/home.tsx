@@ -1,8 +1,10 @@
 import { listen } from "@tauri-apps/api/event";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Corners } from "../components/osd";
 import { useT } from "../i18n";
 import { cancelDownload, downloadYoutube } from "../lib/api";
 import { createVideo } from "../lib/db";
+import { playSfx } from "../lib/sfx";
 
 // Accept a full URL or a bare 11-char YouTube id (e.g. "TM5EWRJ2ZSQ").
 function toVideoUrl(input: string): string {
@@ -53,6 +55,7 @@ export function Home({ onVideo }: { onVideo: (videoId: string) => void }) {
         url: target,
         local_path: out.path ?? "",
       });
+      playSfx();
       onVideo(id);
     } catch (e) {
       setError(String(e));
@@ -74,7 +77,7 @@ export function Home({ onVideo }: { onVideo: (videoId: string) => void }) {
           <h1 className="display">
             {t("home.titleA")}
             <br />
-            <span className="gradient-text">{t("home.titleB")}</span>
+            <span className="accent-text">{t("home.titleB")}</span>
           </h1>
         </div>
 
@@ -117,6 +120,7 @@ export function Home({ onVideo }: { onVideo: (videoId: string) => void }) {
         <div className="steps">
           {steps.map((n) => (
             <div key={n} className="step">
+              <Corners />
               <div className="step-n">{`0${n}`}</div>
               <h3>{t(`home.step${n}.title`)}</h3>
               <p>{t(`home.step${n}.body`)}</p>

@@ -1,16 +1,10 @@
 <svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="tile" x1="160" y1="160" x2="864" y2="864" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#ff9ecd" />
-      <stop offset="0.5" stop-color="#b88cf0" />
-      <stop offset="1" stop-color="#8ab0f8" />
-    </linearGradient>
-  </defs>
   <!-- macOS icon grid: squircle body inset on a 1024 canvas (~100px margin),
-       so it sits the same visual size as other apps in the Dock / ⌘-Tab. -->
-  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#tile)" />
+       so it sits the same visual size as other apps in the Dock / ⌘-Tab.
+       Broadcast OSD: solid pink tile, dark iso glyph. -->
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="#ffb8d1" />
   <g transform="translate(265,265) scale(4.94)">
-    <path d="M73.3 26.7 A33 33 0 1 0 73.3 73.3" stroke="#ffffff" stroke-width="9" stroke-linecap="round" fill="none" />
-    <path d="M44 33 L71 50 L44 67 Z" fill="#ffffff" stroke="#ffffff" stroke-width="6" stroke-linejoin="round" />
+    <path d="M73.3 26.7 A33 33 0 1 0 73.3 73.3" stroke="#16141b" stroke-width="9" stroke-linecap="round" fill="none" />
+    <path d="M44 33 L71 50 L44 67 Z" fill="#16141b" stroke="#16141b" stroke-width="6" stroke-linejoin="round" />
   </g>
 </svg>

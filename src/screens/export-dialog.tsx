@@ -2,7 +2,9 @@ import { listen } from "@tauri-apps/api/event";
 import { open } from "@tauri-apps/plugin-dialog";
 import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { useCallback, useEffect, useState } from "react";
+import { Corners } from "../components/osd";
 import { useT } from "../i18n";
+import { playSfx } from "../lib/sfx";
 import {
   type ExportClip,
   type ExportSummary,
@@ -73,6 +75,7 @@ export function ExportDialog({
       });
       setSummary(result);
       setPhase("done");
+      playSfx();
     } catch (e) {
       setError(String(e));
       setPhase("error");
@@ -92,17 +95,9 @@ export function ExportDialog({
     prog && prog.total > 0 ? Math.round((prog.done / prog.total) * 100) : 0;
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(0,0,0,0.8)",
-        display: "grid",
-        placeItems: "center",
-        padding: 24,
-      }}
-    >
+    <div className="scrim">
       <div className="card">
+        <Corners />
         <h2>{t("export.title", { n: clips.length })}</h2>
 
         {phase === "config" && (
@@ -128,13 +123,6 @@ export function ExportDialog({
               <select
                 value={reelMode}
                 onChange={(e) => setReelMode(e.target.value as ReelMode)}
-                style={{
-                  background: "var(--bg)",
-                  color: "var(--text)",
-                  border: "1px solid var(--border)",
-                  borderRadius: 6,
-                  padding: "4px 8px",
-                }}
               >
                 <option value="none">{t("export.reelNone")}</option>
                 <option value="perTag">{t("export.reelPerTag")}</option>

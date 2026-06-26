@@ -1,5 +1,6 @@
 import { listen } from "@tauri-apps/api/event";
 import { useCallback, useEffect, useState } from "react";
+import { Corners, StatusPill } from "../components/osd";
 import { useT } from "../i18n";
 import { type BinariesStatus, downloadBinaries } from "../lib/api";
 
@@ -38,19 +39,32 @@ export function Setup({
     }
   }, [onReady]);
 
-  const flag = (ok: boolean | undefined) =>
-    ok ? t("setup.ready") : t("setup.missing");
+  const flag = (ok: boolean | undefined) => (
+    <StatusPill tone={ok ? "win" : "loss"}>
+      {ok ? t("setup.ready") : t("setup.missing")}
+    </StatusPill>
+  );
 
   return (
     <div className="stage">
       <div className="card">
+        <Corners />
         <p className="eyebrow">{t("setup.eyebrow")}</p>
         <h2>{t("setup.title")}</h2>
         <p className="muted">{t("setup.body")}</p>
         <ul className="muted">
-          <li>ffmpeg: {flag(status?.ffmpeg)}</li>
-          <li>ffprobe: {flag(status?.ffprobe)}</li>
-          <li>yt-dlp: {flag(status?.ytdlp)}</li>
+          <li>
+            <span>ffmpeg</span>
+            {flag(status?.ffmpeg)}
+          </li>
+          <li>
+            <span>ffprobe</span>
+            {flag(status?.ffprobe)}
+          </li>
+          <li>
+            <span>yt-dlp</span>
+            {flag(status?.ytdlp)}
+          </li>
         </ul>
         {downloading && (
           <div className="bar" style={{ margin: "16px 0" }}>

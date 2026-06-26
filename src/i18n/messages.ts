@@ -5,7 +5,10 @@ export const messages: Record<Locale, Record<string, string>> = {
   en: {
     "nav.github": "GitHub",
     "nav.getApp": "Get the full app ↗",
-    "footer.tagline": "Open-source · 100% offline · powered by cliply's clip engine",
+    "splash.badge": "Exporter",
+    "splash.label": "Booting clip engine…",
+    "status.local": "Local · Offline",
+    "footer.tagline": "Open-source clip cutter · nothing leaves your machine",
     "footer.cloud": "Cloud, teams & live sharing →",
 
     "setup.eyebrow": "First run",
@@ -82,8 +85,10 @@ export const messages: Record<Locale, Record<string, string>> = {
   es: {
     "nav.github": "GitHub",
     "nav.getApp": "Ver la app completa ↗",
-    "footer.tagline":
-      "Código abierto · 100% offline · con el motor de clips de cliply",
+    "splash.badge": "Exporter",
+    "splash.label": "Iniciando motor de clips…",
+    "status.local": "Local · Offline",
+    "footer.tagline": "Cortador de clips open-source · nada sale de tu equipo",
     "footer.cloud": "Nube, equipos y compartir en vivo →",
 
     "setup.eyebrow": "Primer inicio",

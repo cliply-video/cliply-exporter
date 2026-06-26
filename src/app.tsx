@@ -1,5 +1,6 @@
 import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { Shell } from "./components/chrome";
+import { Splash } from "./components/splash";
 import { type BinariesStatus, binariesStatus } from "./lib/api";
 import { Clips } from "./screens/clips";
 import { Home } from "./screens/home";
@@ -17,6 +18,7 @@ const ready = (s: BinariesStatus | null) => !!s && s.ffmpeg && s.ytdlp;
 export function App() {
   const [status, setStatus] = useState<BinariesStatus | null>(null);
   const [step, setStep] = useState<Step>({ name: "home" });
+  const [booting, setBooting] = useState(true);
 
   const refresh = useCallback(async () => {
     setStatus(await binariesStatus());
@@ -45,5 +47,10 @@ export function App() {
     );
   }
 
-  return <Shell>{screen}</Shell>;
+  return (
+    <>
+      <Shell>{screen}</Shell>
+      {booting && <Splash onDone={() => setBooting(false)} />}
+    </>
+  );
 }
