@@ -37,19 +37,27 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
       - run: npm ci
+      # macOS signing + notarization is OFF until you have a Developer ID cert
+      # AND set repo variable ENABLE_APPLE_SIGNING=true. When off, the APPLE_*
+      # vars are never defined, so the tauri bundler skips codesign and ships an
+      # UNSIGNED build (a defined-but-empty APPLE_CERTIFICATE still triggers a
+      # failing `security import`, so it must be absent, not "" ). docs/signing.md
+      - name: Configure macOS signing
+        if: matrix.platform == 'macos-14' && vars.ENABLE_APPLE_SIGNING == 'true'
+        run: |
+          {
+            echo "APPLE_CERTIFICATE<<__CERT__"
+            echo "${{ secrets.APPLE_CERTIFICATE }}"
+            echo "__CERT__"
+            echo "APPLE_CERTIFICATE_PASSWORD=${{ secrets.APPLE_CERTIFICATE_PASSWORD }}"
+            echo "APPLE_SIGNING_IDENTITY=${{ secrets.APPLE_SIGNING_IDENTITY }}"
+            echo "APPLE_ID=${{ secrets.APPLE_ID }}"
+            echo "APPLE_PASSWORD=${{ secrets.APPLE_PASSWORD }}"
+            echo "APPLE_TEAM_ID=${{ secrets.APPLE_TEAM_ID }}"
+          } >> "$GITHUB_ENV"
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # macOS signing + notarization is OFF until you have a Developer ID
-          # cert AND set the repo variable ENABLE_APPLE_SIGNING=true. Until then
-          # every APPLE_* resolves to "" so tauri-action ships an UNSIGNED build
-          # instead of failing on cert import. See docs/signing.md.
-          APPLE_CERTIFICATE: ${{ vars.ENABLE_APPLE_SIGNING == 'true' && secrets.APPLE_CERTIFICATE || '' }}
-          APPLE_CERTIFICATE_PASSWORD: ${{ vars.ENABLE_APPLE_SIGNING == 'true' && secrets.APPLE_CERTIFICATE_PASSWORD || '' }}
-          APPLE_SIGNING_IDENTITY: ${{ vars.ENABLE_APPLE_SIGNING == 'true' && secrets.APPLE_SIGNING_IDENTITY || '' }}
-          APPLE_ID: ${{ vars.ENABLE_APPLE_SIGNING == 'true' && secrets.APPLE_ID || '' }}
-          APPLE_PASSWORD: ${{ vars.ENABLE_APPLE_SIGNING == 'true' && secrets.APPLE_PASSWORD || '' }}
-          APPLE_TEAM_ID: ${{ vars.ENABLE_APPLE_SIGNING == 'true' && secrets.APPLE_TEAM_ID || '' }}
         with:
           tagName: ${{ github.ref_name }}
           releaseName: Cliply Exporter ${{ github.ref_name }}
