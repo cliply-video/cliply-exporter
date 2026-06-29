@@ -73,8 +73,9 @@ fn exe_name(name: &str) -> String {
 /// Versions are pinned with verified SHA256 (bump deliberately on release).
 /// `None` means no managed download for this platform → fall back to a
 /// system/PATH copy (see `resolve`). yt-dlp: pinned 2026.06.09 (raw binary,
-/// all platforms). ffmpeg/ffprobe: macOS via the evermeet 8.1.1 static zip;
-/// Windows/Linux not yet bundled — use system ffmpeg or set FFMPEG_PATH.
+/// all platforms). ffmpeg/ffprobe: macOS via the evermeet 8.1.1 static zip,
+/// Windows via the gyan.dev 8.1.2 static zip; Linux not yet bundled — use
+/// system ffmpeg or set FFMPEG_PATH.
 fn source(tool: Tool) -> Option<Source> {
     match tool {
         Tool::YtDlp => {
@@ -121,6 +122,21 @@ fn source(tool: Tool) -> Option<Source> {
                 return Some(Source {
                     url,
                     sha256,
+                    archive: Archive::Zip,
+                    member,
+                });
+            }
+            #[cfg(target_os = "windows")]
+            {
+                // gyan.dev 8.1.2 static build; ffmpeg.exe and ffprobe.exe ship
+                // in one zip, fetched once per tool.
+                let member = match tool {
+                    Tool::Ffprobe => "ffprobe.exe",
+                    _ => "ffmpeg.exe",
+                };
+                return Some(Source {
+                    url: "https://github.com/GyanD/codexffmpeg/releases/download/8.1.2/ffmpeg-8.1.2-essentials_build.zip",
+                    sha256: "db580001caa24ac104c8cb856cd113a87b0a443f7bdf47d8c12b1d740584a2ec",
                     archive: Archive::Zip,
                     member,
                 });
@@ -217,23 +233,40 @@ pub async fn download_binaries(app: AppHandle) -> Result<(), String> {
         return Ok(());
     }
 
+    // Split into tools we can fetch vs. those with no managed source on this
+    // platform. Download everything fetchable before reporting the rest, so a
+    // source-less tool (e.g. ffmpeg on Linux) never blocks yt-dlp.
+    let mut sources: Vec<(Tool, Source)> = Vec::new();
+    let mut unavailable: Vec<&'static str> = Vec::new();
+    for tool in missing {
+        match source(tool) {
+            Some(src) if src.sha256.is_empty() => {
+                return Err(format!("{}: download checksum not pinned", tool.key()));
+            }
+            Some(src) => sources.push((tool, src)),
+            None => unavailable.push(tool.key()),
+        }
+    }
+
     let dir = managed_dir(&app)?;
     std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
-    let slice = 100.0 / missing.len() as f64;
 
-    for (i, tool) in missing.iter().enumerate() {
-        let src = source(*tool).ok_or_else(|| {
-            format!(
-                "{}: no managed download for this platform — install it (e.g. your package manager) or set {}",
-                tool.key(),
-                tool.env_var()
-            )
-        })?;
-        if src.sha256.is_empty() {
-            return Err(format!("{}: download checksum not pinned", tool.key()));
-        }
+    let slice = if sources.is_empty() {
+        0.0
+    } else {
+        100.0 / sources.len() as f64
+    };
+    for (i, (tool, src)) in sources.iter().enumerate() {
         let dest = dir.join(exe_name(tool.key()));
-        download_one(&app, &dir, &src, &dest, slice * i as f64, slice).await?;
+        download_one(&app, &dir, src, &dest, slice * i as f64, slice).await?;
+    }
+
+    if !unavailable.is_empty() {
+        return Err(format!(
+            "no managed download for {} on this platform — install {} via your package manager or set the matching *_PATH env var",
+            unavailable.join(", "),
+            if unavailable.len() == 1 { "it" } else { "them" },
+        ));
     }
     emit(&app, 100.0);
     Ok(())
