@@ -3,7 +3,7 @@ import { useT } from "../i18n";
 import { playSfx } from "../lib/sfx";
 import { LogoMark } from "./logo";
 
-const VERSION = "0.1.0";
+const VERSION = __APP_VERSION__;
 
 // Boot splash — matches cliply's desktop SplashScreen exactly: horizontal channel
 // lockup (glowing pink mark + RGB-glitch CLIPLY wordmark, burst-on-mount) with a

@@ -4,7 +4,7 @@ import { CLIPLY_URL, GITHUB_URL, openExternal } from "../lib/links";
 import { Logo } from "./logo";
 import { FieldTexture, StatusPill } from "./osd";
 
-const VERSION = "0.1.0";
+const VERSION = __APP_VERSION__;
 
 function GitHubIcon() {
   return (
