@@ -37,6 +37,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
       - run: npm ci
+      # Bundle artifact names come from tauri.conf.json `version`, NOT the tag.
+      # Sync it from the pushed tag so assets match the release (e.g. v0.2.2).
+      - name: Sync version from tag
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          tmp=$(mktemp)
+          jq --arg v "$VERSION" '.version = $v' src-tauri/tauri.conf.json > "$tmp" && mv "$tmp" src-tauri/tauri.conf.json
+          echo "Synced bundle version to $VERSION"
       # macOS signing + notarization is OFF until you have a Developer ID cert
       # AND set repo variable ENABLE_APPLE_SIGNING=true. When off, the APPLE_*
       # vars are never defined, so the tauri bundler skips codesign and ships an
