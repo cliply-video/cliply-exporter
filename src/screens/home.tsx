@@ -1,10 +1,24 @@
 import { listen } from "@tauri-apps/api/event";
+import { open } from "@tauri-apps/plugin-dialog";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Corners } from "../components/osd";
 import { useT } from "../i18n";
-import { cancelDownload, downloadYoutube } from "../lib/api";
+import { cancelDownload, downloadUrl, downloadYoutube } from "../lib/api";
 import { createVideo } from "../lib/db";
 import { playSfx } from "../lib/sfx";
+
+const VIDEO_EXTS = [
+  "mp4",
+  "m4v",
+  "mov",
+  "webm",
+  "mkv",
+  "avi",
+  "mpg",
+  "mpeg",
+  "wmv",
+  "flv",
+];
 
 // Accept a full URL or a bare 11-char YouTube id (e.g. "TM5EWRJ2ZSQ").
 function toVideoUrl(input: string): string {
@@ -13,6 +27,23 @@ function toVideoUrl(input: string): string {
     return `https://www.youtube.com/watch?v=${s}`;
   }
   return s;
+}
+
+// A direct media URL ends in a single-file video extension — fetch it straight
+// over HTTP. Anything else (YouTube, HLS, other sites) goes through yt-dlp.
+function isDirectMedia(input: string): boolean {
+  try {
+    const u = new URL(input);
+    if (u.protocol !== "http:" && u.protocol !== "https:") return false;
+    const ext = u.pathname.split(".").pop()?.toLowerCase();
+    return !!ext && VIDEO_EXTS.includes(ext);
+  } catch {
+    return false;
+  }
+}
+
+function basename(path: string): string {
+  return path.split(/[\\/]/).pop() ?? path;
 }
 
 export function Home({ onVideo }: { onVideo: (videoId: string) => void }) {
@@ -44,7 +75,8 @@ export function Home({ onVideo }: { onVideo: (videoId: string) => void }) {
     setError(null);
     setPercent(0);
     try {
-      const out = await downloadYoutube(id, target);
+      const fetcher = isDirectMedia(target) ? downloadUrl : downloadYoutube;
+      const out = await fetcher(id, target);
       if (out.status === "cancelled") {
         setBusy(false);
         return;
@@ -62,6 +94,30 @@ export function Home({ onVideo }: { onVideo: (videoId: string) => void }) {
       setBusy(false);
     }
   }, [url, onVideo]);
+
+  // Use a local video file in place — no download, no copy. ffmpeg and the
+  // asset protocol read the original path directly.
+  const pickLocal = useCallback(async () => {
+    setError(null);
+    const path = await open({
+      multiple: false,
+      filters: [{ name: "Video", extensions: VIDEO_EXTS }],
+    });
+    if (!path || typeof path !== "string") return;
+    const id = crypto.randomUUID();
+    try {
+      await createVideo({
+        id,
+        title: basename(path).replace(/\.[^.]+$/, ""),
+        url: "",
+        local_path: path,
+      });
+      playSfx();
+      onVideo(id);
+    } catch (e) {
+      setError(String(e));
+    }
+  }, [onVideo]);
 
   const cancel = useCallback(() => {
     if (videoId.current) cancelDownload(videoId.current);
@@ -112,6 +168,11 @@ export function Home({ onVideo }: { onVideo: (videoId: string) => void }) {
             {busy && (
               <button type="button" className="btn-lg" onClick={cancel}>
                 {t("home.cancel")}
+              </button>
+            )}
+            {!busy && (
+              <button type="button" className="btn-lg" onClick={pickLocal}>
+                {t("home.localFile")}
               </button>
             )}
           </div>

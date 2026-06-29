@@ -39,6 +39,7 @@ pub fn run() {
             binaries::binaries_status,
             binaries::download_binaries,
             download::download_youtube,
+            download::download_url,
             download::cancel_download,
             media::read_xml_file,
             media::generate_poster,

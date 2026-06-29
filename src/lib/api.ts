@@ -20,6 +20,9 @@ export type DownloadOutcome = {
 export const downloadYoutube = (videoId: string, url: string) =>
   invoke<DownloadOutcome>("download_youtube", { videoId, url });
 
+export const downloadUrl = (videoId: string, url: string) =>
+  invoke<DownloadOutcome>("download_url", { videoId, url });
+
 export const cancelDownload = (videoId: string) =>
   invoke<void>("cancel_download", { videoId });
 

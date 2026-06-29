@@ -3,11 +3,13 @@
 //! download or system PATH) directly through tokio.
 
 use std::collections::HashMap;
-use std::path::PathBuf;
+use std::io::Write;
+use std::path::{Path, PathBuf};
 use std::process::Stdio;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 
+use futures_util::StreamExt;
 use serde::Serialize;
 use tauri::{AppHandle, Emitter, Manager, State};
 use tokio::io::{AsyncBufReadExt, BufReader};
@@ -195,6 +197,101 @@ pub async fn download_youtube(
         path: Some(out_str),
         title,
     })
+}
+
+/// Downloads a direct media URL (e.g. an .mp4/.mov/.webm on a CDN) straight to
+/// <app-data>/media/<video_id>.mp4 with a streaming HTTP GET — no yt-dlp needed.
+/// Shares the cancel registry with `download_youtube` so the UI cancels either.
+#[tauri::command]
+pub async fn download_url(
+    app: AppHandle,
+    state: State<'_, DownloadState>,
+    video_id: String,
+    url: String,
+) -> Result<DownloadOutcome, String> {
+    let out = media_dir(&app)?.join(format!("{video_id}.mp4"));
+    let out_str = out.to_string_lossy().into_owned();
+
+    let cancel = Arc::new(AtomicBool::new(false));
+    state
+        .cancel
+        .lock()
+        .unwrap()
+        .insert(video_id.clone(), cancel.clone());
+
+    let result = stream_to_file(&app, &video_id, &url, &out, &cancel).await;
+    let was_cancelled = cancel.load(Ordering::Relaxed);
+    state.cancel.lock().unwrap().remove(&video_id);
+
+    if was_cancelled {
+        let _ = std::fs::remove_file(&out);
+        return Ok(DownloadOutcome {
+            status: "cancelled",
+            path: None,
+            title: None,
+        });
+    }
+    result?;
+    if !out.exists() {
+        return Err("download produced no file".to_string());
+    }
+
+    emit(&app, &video_id, 100.0);
+    Ok(DownloadOutcome {
+        status: "done",
+        path: Some(out_str),
+        title: Some(title_from_url(&url)),
+    })
+}
+
+async fn stream_to_file(
+    app: &AppHandle,
+    video_id: &str,
+    url: &str,
+    out: &Path,
+    cancel: &AtomicBool,
+) -> Result<(), String> {
+    let res = reqwest::get(url).await.map_err(es)?;
+    if !res.status().is_success() {
+        return Err(format!("download failed: HTTP {}", res.status()));
+    }
+    let total = res.content_length().unwrap_or(0);
+
+    let mut file = std::fs::File::create(out).map_err(es)?;
+    let mut received: u64 = 0;
+    let mut last = -1.0_f64;
+    let mut stream = res.bytes_stream();
+    while let Some(chunk) = stream.next().await {
+        if cancel.load(Ordering::Relaxed) {
+            return Ok(()); // caller removes the partial file
+        }
+        let chunk = chunk.map_err(es)?;
+        file.write_all(&chunk).map_err(es)?;
+        received += chunk.len() as u64;
+        if total > 0 {
+            let percent = (received as f64 / total as f64) * 100.0;
+            if percent - last >= 1.0 {
+                last = percent;
+                emit(app, video_id, percent);
+            }
+        }
+    }
+    file.flush().map_err(es)?;
+    Ok(())
+}
+
+/// Derives a human title from a media URL: the filename without its extension,
+/// query/fragment stripped. Falls back to the raw URL.
+fn title_from_url(url: &str) -> String {
+    let path = url.split(['?', '#']).next().unwrap_or(url);
+    let file = path.rsplit('/').next().unwrap_or(path);
+    let stem = file.rsplit_once('.').map(|(s, _)| s).unwrap_or(file);
+    let title = stem.replace("%20", " ");
+    if title.trim().is_empty() {
+        url.to_string()
+    } else {
+        title
+    }
 }
 
 /// Signals an in-flight download to stop; the `.part` file is kept for resume.
