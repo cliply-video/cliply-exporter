@@ -1,8 +1,29 @@
 <svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
   <!-- macOS icon grid: squircle body inset on a 1024 canvas (~100px margin),
        so it sits the same visual size as other apps in the Dock / ⌘-Tab.
-       Broadcast OSD: solid pink tile, dark iso glyph. -->
-  <rect x="100" y="100" width="824" height="824" rx="185" fill="#ffb8d1" />
+       Broadcast OSD: pink tile with a soft gradient + dark-purple (#1a1822)
+       corner depth, dark iso glyph. -->
+  <defs>
+    <linearGradient id="tile" x1="200" y1="160" x2="850" y2="890" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffd2e3" />
+      <stop offset="0.52" stop-color="#ffb1cd" />
+      <stop offset="1" stop-color="#f386b0" />
+    </linearGradient>
+    <radialGradient id="gloss" cx="0.32" cy="0.24" r="0.72">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.42" />
+      <stop offset="0.55" stop-color="#ffffff" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="depth" cx="0.86" cy="0.9" r="0.62">
+      <stop offset="0" stop-color="#1a1822" stop-opacity="0.3" />
+      <stop offset="0.72" stop-color="#1a1822" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#tile)" />
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#depth)" />
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#gloss)" />
+  <rect x="102.5" y="102.5" width="819" height="819" rx="183" fill="none" stroke="#ffffff" stroke-opacity="0.22" stroke-width="3" />
+
   <g transform="translate(265,265) scale(4.94)">
     <path d="M73.3 26.7 A33 33 0 1 0 73.3 73.3" stroke="#1a1822" stroke-width="9" stroke-linecap="round" fill="none" />
     <path d="M44 33 L71 50 L44 67 Z" fill="#1a1822" stroke="#1a1822" stroke-width="6" stroke-linejoin="round" />
