@@ -49,7 +49,7 @@ export function Logo() {
           </span>
           <span className="bx-glitch-base">cliply</span>
         </span>
-        <span className="oss">export</span>
+        <span className="oss">exporter</span>
       </span>
     </span>
   );

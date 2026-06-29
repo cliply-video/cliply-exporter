@@ -27,7 +27,7 @@ base64 -i certificate.p12 | pbcopy   # base64, copied to clipboard
 ## 3. App-specific password (for notarization)
 
 appleid.apple.com → Sign-In & Security → **App-Specific Passwords** → generate
-one (label it "cliply-export-notary"). Copy it.
+one (label it "cliply-exporter-notary"). Copy it.
 
 Find your **Team ID** at developer.apple.com → Membership (10 chars, e.g. `AB12CD34EF`).
 
@@ -61,7 +61,7 @@ Push a tag (`git tag -a v0.1.1 -m … && git push origin v0.1.1`). The macOS job
 now signs with the Developer ID cert and notarizes via `notarytool`. Verify:
 
 ```bash
-spctl -a -vvv "/Applications/Cliply Export.app"   # → accepted, source=Notarized Developer ID
+spctl -a -vvv "/Applications/Cliply Exporter.app"   # → accepted, source=Notarized Developer ID
 ```
 
 Then drop the "Running it on macOS" workaround from the landing page.

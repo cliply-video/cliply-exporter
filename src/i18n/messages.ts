@@ -14,7 +14,7 @@ export const messages: Record<Locale, Record<string, string>> = {
     "setup.eyebrow": "First run",
     "setup.title": "Setting up",
     "setup.body":
-      "Cliply Export needs ffmpeg and yt-dlp. They download once from their official sources, are verified by checksum, and never bundled. Already have them on your PATH? They're used automatically.",
+      "Cliply Exporter needs ffmpeg and yt-dlp. They download once from their official sources, are verified by checksum, and never bundled. Already have them on your PATH? They're used automatically.",
     "setup.ready": "ready",
     "setup.missing": "missing",
     "setup.download": "Download",
@@ -25,7 +25,7 @@ export const messages: Record<Locale, Record<string, string>> = {
     "home.titleA": "Turn a match into",
     "home.titleB": "shareable clips.",
     "home.lead":
-      "Paste a video link, drop in your analysis XML, and export ready-to-cut MP4s — folders per tag and reels included. No account, no cloud, nothing leaves your machine.",
+      "Paste a video link or open a local file, drop in your analysis XML, and export ready-to-cut MP4s — folders per tag and reels included. No account, no cloud, nothing leaves your machine.",
     "home.placeholder": "YouTube link, direct video URL, or ID",
     "home.download": "Download video →",
     "home.downloading": "Downloading… {pct}%",
@@ -34,7 +34,7 @@ export const messages: Record<Locale, Record<string, string>> = {
     "home.step1.title": "Add a video",
     "home.step1.body": "A YouTube link, a direct video URL, or a local file.",
     "home.step2.title": "Import XML",
-    "home.step2.body": "SportsCode / Nacsport tags become colored clips. Optional.",
+    "home.step2.body": "Cliply, SportsCode or Nacsport tags become colored clips. Optional.",
     "home.step3.title": "Export",
     "home.step3.body": "MP4s in per-tag folders, plus reels. Stream-copy fast.",
 
@@ -95,7 +95,7 @@ export const messages: Record<Locale, Record<string, string>> = {
     "setup.eyebrow": "Primer inicio",
     "setup.title": "Configuración",
     "setup.body":
-      "Cliply Export necesita ffmpeg y yt-dlp. Se descargan una vez desde sus fuentes oficiales, se verifican por checksum y nunca se empaquetan. ¿Ya los tenés en tu PATH? Se usan automáticamente.",
+      "Cliply Exporter necesita ffmpeg y yt-dlp. Se descargan una vez desde sus fuentes oficiales, se verifican por checksum y nunca se empaquetan. ¿Ya los tenés en tu PATH? Se usan automáticamente.",
     "setup.ready": "listo",
     "setup.missing": "falta",
     "setup.download": "Descargar",
@@ -106,7 +106,7 @@ export const messages: Record<Locale, Record<string, string>> = {
     "home.titleA": "Convertí un partido en",
     "home.titleB": "clips para compartir.",
     "home.lead":
-      "Pegá un enlace de video, sumá tu XML de análisis y exportá MP4s listos — carpetas por etiqueta y reels incluidos. Sin cuenta, sin nube, nada sale de tu equipo.",
+      "Pegá un enlace de video o abrí un archivo local, sumá tu XML de análisis y exportá MP4s listos — carpetas por etiqueta y reels incluidos. Sin cuenta, sin nube, nada sale de tu equipo.",
     "home.placeholder": "Link de YouTube, URL directa de video o ID",
     "home.download": "Descargar video →",
     "home.downloading": "Descargando… {pct}%",
@@ -116,7 +116,7 @@ export const messages: Record<Locale, Record<string, string>> = {
     "home.step1.body": "Un link de YouTube, una URL directa de video o un archivo local.",
     "home.step2.title": "Importá XML",
     "home.step2.body":
-      "Las etiquetas de SportsCode / Nacsport se vuelven clips con color. Opcional.",
+      "Las etiquetas de Cliply, SportsCode o Nacsport se vuelven clips con color. Opcional.",
     "home.step3.title": "Exportá",
     "home.step3.body": "MP4s en carpetas por etiqueta, más reels. Rápido por stream-copy.",
 

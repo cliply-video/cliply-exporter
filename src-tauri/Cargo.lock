@@ -606,7 +606,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "cliply-export"
+name = "cliply-exporter"
 version = "0.1.0"
 dependencies = [
  "futures-util",

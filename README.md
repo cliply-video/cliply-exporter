@@ -1,4 +1,4 @@
-# Cliply Export
+# Cliply Exporter
 
 Open-source desktop clip cutter. Paste a YouTube URL, import a sports-analysis
 XML (SportsCode / Nacsport `ALL_INSTANCES`), review the generated clips, pick
@@ -7,7 +7,7 @@ the ones you want, and export them as MP4s with ffmpeg.
 Fully offline and local — no account, no cloud, no telemetry.
 
 <p align="center">
-  <img src="docs/demo.gif" alt="Cliply Export — paste a link, import XML, export clips" width="760" />
+  <img src="docs/demo.gif" alt="Cliply Exporter — paste a link, import XML, export clips" width="760" />
 </p>
 
 > Want hosting, teams, sharing and live collaboration? Check out the full app at

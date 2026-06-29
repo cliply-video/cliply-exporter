@@ -1,9 +1,9 @@
-# Cliply Export — Backlog de Producto/Ingeniería
+# Cliply Exporter — Backlog de Producto/Ingeniería
 
 **Fecha:** 2026-06-15
 **Repositorio:** `~/Development/cliply-oss` (Tauri v2 + React/TypeScript, totalmente offline)
 
-Cliply Export descarga un video de YouTube (yt-dlp), importa opcionalmente un XML de análisis (SportsCode/Nacsport), permite revisar y seleccionar clips, y exporta MP4s con ffmpeg (carpeta-por-tag + reels). Es standalone, open-source y no depende del SaaS de cliply.video.
+Cliply Exporter descarga un video de YouTube (yt-dlp), importa opcionalmente un XML de análisis (SportsCode/Nacsport), permite revisar y seleccionar clips, y exporta MP4s con ffmpeg (carpeta-por-tag + reels). Es standalone, open-source y no depende del SaaS de cliply.video.
 
 ---
 

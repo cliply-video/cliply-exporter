@@ -6,7 +6,7 @@ let dbP: Promise<Database> | null = null;
 // Migrations run on first load (registered in the Rust sql plugin builder
 // against this exact connection string).
 function db(): Promise<Database> {
-  if (!dbP) dbP = Database.load("sqlite:cliply-oss.db");
+  if (!dbP) dbP = Database.load("sqlite:cliply-exporter.db");
   return dbP;
 }
 

@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Cliply Export",
+  "productName": "Cliply Exporter",
   "version": "0.1.0",
-  "identifier": "video.cliply.oss",
+  "identifier": "video.cliply.exporter",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -13,7 +13,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "Cliply Export",
+        "title": "Cliply Exporter",
         "width": 1200,
         "height": 800,
         "minWidth": 900,

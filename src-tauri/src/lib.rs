@@ -16,7 +16,7 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(
             tauri_plugin_sql::Builder::default()
-                .add_migrations("sqlite:cliply-oss.db", migrations)
+                .add_migrations("sqlite:cliply-exporter.db", migrations)
                 .build(),
         )
         .plugin(
@@ -24,7 +24,7 @@ pub fn run() {
                 .targets([
                     tauri_plugin_log::Target::new(tauri_plugin_log::TargetKind::Stdout),
                     tauri_plugin_log::Target::new(tauri_plugin_log::TargetKind::LogDir {
-                        file_name: Some("cliply-oss".into()),
+                        file_name: Some("cliply-exporter".into()),
                     }),
                 ])
                 .level(log::LevelFilter::Info)
