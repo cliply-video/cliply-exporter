@@ -1,8 +1,10 @@
 # Code signing & notarization (macOS)
 
-The release workflow is **already wired** to sign + notarize macOS builds. It's
-a no-op until the repo secrets below exist — once set, every `v*` tag produces a
-signed, notarized `.dmg` with **no Gatekeeper warning**.
+The release workflow is **already wired** to sign + notarize macOS builds. It
+stays **off** — shipping unsigned `.dmg`s — until you add the secrets below
+**and** flip the repo variable `ENABLE_APPLE_SIGNING` to `true` (step 5). Until
+then every `v*` tag builds unsigned and CI stays green; no half-configured cert
+can break the release.
 
 > Requires an **Apple Developer account** ($99/yr). Only steps 1–4 are manual
 > (they need your Apple account); the workflow does the rest.
@@ -55,7 +57,15 @@ gh secret set APPLE_PASSWORD -R cliply-video/cliply-exporter
 gh secret set APPLE_TEAM_ID -R cliply-video/cliply-exporter
 ```
 
-## 5. Cut a release
+## 5. Turn signing on
+
+Repo → Settings → Secrets and variables → Actions → **Variables** → set
+`ENABLE_APPLE_SIGNING` = `true` (or `gh variable set ENABLE_APPLE_SIGNING -R
+cliply-video/cliply-exporter -b true`). This is the master switch: the workflow
+only imports the cert when it's `true`, so the secrets above can be added/tested
+without risking a broken release.
+
+## 6. Cut a release
 
 Push a tag (`git tag -a v0.1.1 -m … && git push origin v0.1.1`). The macOS job
 now signs with the Developer ID cert and notarizes via `notarytool`. Verify:
